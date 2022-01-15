@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "target": "ES6",
+        "module": "commonjs",
+        "outDir": "build",
+        "noImplicitAny": true,
+        "noImplicitOverride": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "alwaysStrict": true,
+        "strictNullChecks": true,
+        "allowUnusedLabels": false,
+        "downlevelIteration": true,
+        "experimentalDecorators": true
+    }
+}
