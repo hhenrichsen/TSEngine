@@ -1,3 +1,5 @@
+import { GameEventType } from "../event/Event";
+import { GameEventTarget } from "../event/EventTarget";
 import { isNullOrUndefined } from "../util/PrimitiveTypeguards";
 import {Component, ComponentType} from "./Component";
 
@@ -5,48 +7,46 @@ interface InternalComponent<T> {
     data?: T;
 }
 
-export interface ComponentTypeCreatedListener {
-    (type: string, forced: boolean): void;
+export interface ComponentCreatedEvent<T> {
+    type: ComponentType<string, T>;
+    id: number;
+    data: T;
 }
 
-export interface ComponentRemovedListener {
-    (type: ComponentType<string, unknown>, id: number, data: unknown): void;
+export const ComponentCreated = new GameEventType<"ComponentCreated", ComponentCreatedEvent<unknown>>("ComponentCreated");
+
+export interface ComponentRemovedEvent<T> {
+    type: ComponentType<string, T>;
+    id: number;
+    data: T;
 }
 
-export interface ComponentCreatedListener {
-    (type: ComponentType<string, unknown>, id: number, data: unknown): void;
+export const ComponentRemoved = new GameEventType<"ComponentRemoved", ComponentRemovedEvent<unknown>>("ComponentRemoved");
+
+export interface ComponentUpdatedEvent<T> {
+    type: ComponentType<string, T>;
+    id: number;
+    oldData: T;
+    newData: T;
 }
 
-export interface ComponentUpdateListener {
-    (type: ComponentType<string, unknown>, id: number, oldData: unknown, newData: unknown): void;
+export const ComponentUpdated = new GameEventType<"ComponentUpdated", ComponentUpdatedEvent<unknown>>("ComponentUpdated");
+
+export interface ComponentTypeCreatedEvent {
+    type: string;
+    forced: boolean;
 }
 
-export class ComponentStore {
+export const ComponentTypeCreated = new GameEventType<"ComponentTypeCreated", ComponentTypeCreatedEvent>("ComponentTypeCreated");
+
+export class ComponentStore extends GameEventTarget {
     private registrationFinished = false;
     private componentTypes: Record<string, ComponentType> = {};
     private pools: Record<string, InternalComponent<any>[]> = {};
     private unusedIds: Record<string, number[]> = {};
-    private createTypeListeners: ComponentTypeCreatedListener[] = [];
-    private componentAddListeners: ComponentCreatedListener[] = [];
-    private componentUpdateListeners: ComponentUpdateListener[] = [];
-    private componentRemoveListeners: ComponentRemovedListener[] = [];
 
-    constructor(private readonly poolSize: number = 2000) {}
-
-    public addTypeListener(listener: ComponentTypeCreatedListener) {
-        this.createTypeListeners.push(listener);
-    }
-
-    public addCreateListener(listener: ComponentCreatedListener) {
-        this.componentAddListeners.push(listener);
-    }
-
-    public addRemoveListener(listener: ComponentRemovedListener) {
-        this.componentRemoveListeners.push(listener);
-    }
-
-    public addUpdateListener(listener: ComponentUpdateListener) {
-        this.componentUpdateListeners.push(listener);
+    constructor(private readonly poolSize: number = 2000, private readonly parentStore?: ComponentStore, parentEventTarget?: GameEventTarget) {
+        super(parentEventTarget);
     }
 
     public getType(id: string): ComponentType<string, any> | undefined {
@@ -58,9 +58,7 @@ export class ComponentStore {
         wasForced = false,
     ) {
         const existingComponent = this.componentTypes[componentType.key];
-        this.createTypeListeners.forEach((listener) =>
-            listener(componentType.key, wasForced),
-        );
+        this.raise(ComponentTypeCreated.with({type: componentType.key, forced: wasForced}));
         if (existingComponent) {
             throw new Error(
                 `A component already exists with componentName ${componentType.key}, and the force parameter was not set when registering it.`,
@@ -97,21 +95,25 @@ export class ComponentStore {
             pool.push({});
         }
         pool[newId].data = data;
-        this.componentAddListeners.forEach((listener) =>
-            listener(type, newId, data)
-        );
+        this.raise(ComponentCreated.with({type, id: newId, data}));
         return newId;
     }
 
-    public get<T>(type: ComponentType<string, T>, index: number) {
+    public get<T>(type: ComponentType<string, T>, index: number): T {
         const pool = this.pools[type.key];
         if (isNullOrUndefined(pool)) {
+            if (this.parentStore != undefined) {
+                return this.parentStore.get(type, index);
+            }
             throw new Error(
                 `Trying to get unknown component type ${type.key}. Was it registered?`,
             );
         }
         const element = pool[index];
         if (isNullOrUndefined(element.data)) {
+            if (this.parentStore != undefined) {
+                return this.parentStore.get(type, index);
+            }
             throw new Error(
                 `Trying to access unknown component instance ${type.key} ${index}.`,
             );
@@ -122,17 +124,25 @@ export class ComponentStore {
     public update<T>(type: ComponentType<string, T>, index: number, data: T) {
         const pool = this.pools[type.key];
         if (isNullOrUndefined(pool)) {
+            if (this.parentStore != undefined) {
+                this.parentStore.update(type, index, data);
+                return;
+            }
             throw new Error(
                 `Trying to get unknown component type ${type.key}. Was it registered?`,
             );
         }
         const element = pool[index];
         if (isNullOrUndefined(element.data)) {
+            if (this.parentStore != undefined) {
+                this.parentStore.update(type, index, data);
+                return;
+            }
             throw new Error(
                 `Trying to access unknown component instance ${type.key} ${index}.`,
             );
         }
-        this.componentUpdateListeners.forEach((listener) => listener(type, index, element.data, data));
+        this.raise(ComponentUpdated.with({type, id: index, oldData: element.data, newData: data}));
         element.data = data;
     }
 
@@ -141,13 +151,15 @@ export class ComponentStore {
         const pool = this.pools[key];
         const ids = this.unusedIds[key];
         if (isNullOrUndefined(pool)) {
+            if (this.parentStore != undefined) {
+                this.parentStore.remove(type, index);
+                return;
+            }
             throw new Error(
                 `Trying to remove unknown component type ${type.key}. Was it registered?`,
             );
         }
-        this.componentRemoveListeners.forEach((listener) =>
-            listener(type, index, pool[index].data),
-        );
+        this.raise(ComponentRemoved.with({type, id: index, data: pool[index].data}));
         pool[index].data = null;
         ids.push(index);
     }

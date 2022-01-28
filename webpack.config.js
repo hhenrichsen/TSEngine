@@ -5,6 +5,7 @@ module.exports = {
     path: path.resolve(__dirname),
     filename: 'bundle.js'
   },
+  devtool: 'eval-source-map',
   resolve: {
     extensions: ['.ts', '.tsx', '.js']
   },

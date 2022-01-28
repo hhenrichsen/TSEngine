@@ -1,35 +1,27 @@
-import {ECS} from "../base/ECS";
+import { createTestScene } from "../base/Game.test";
 import {Lifetime} from "../components/Lifetime";
 import {LifetimeSystem} from "./LifetimeSystem";
 
 describe(module.id, () => {
     it("should remove entities with lifetimes below 0", () => {
-        const ecs = new ECS(1);
+        const { game, scene } = createTestScene([Lifetime]);
 
-        ecs.addComponentType(Lifetime);
+        scene.addSystem(LifetimeSystem);
 
-        ecs.addSystem(LifetimeSystem);
-
-        ecs.finishRegistration();
-
-        const ent1 = ecs.createEntity();
+        const ent1 = scene.createEntity();
         ent1.addComponentLiteral(Lifetime, 3000);
-        ecs.update(3000);
-        expect(ecs.getEntity(ent1.id)).toBeFalsy();
+        game.update(3000);
+        expect(scene.getEntity(ent1.id)).toBeFalsy();
     });
 
     it("should leave other entities alone", () => {
-        const ecs = new ECS(1);
+        const { game, scene } = createTestScene([Lifetime]);
 
-        ecs.addComponentType(Lifetime);
+        scene.addSystem(LifetimeSystem);
 
-        ecs.addSystem(LifetimeSystem);
-
-        ecs.finishRegistration();
-
-        const ent1 = ecs.createEntity();
+        const ent1 = scene.createEntity();
         ent1.addComponentLiteral(Lifetime, 3000);
-        ecs.update(1000);
-        expect(ecs.getEntity(ent1.id)).toBeTruthy();
+        game.update(1000);
+        expect(scene.getEntity(ent1.id)).toBeTruthy();
     });
 });

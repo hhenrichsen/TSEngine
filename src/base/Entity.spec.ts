@@ -1,19 +1,20 @@
 import { Lifetime } from "../components/Lifetime";
 import { Position2D } from "../components/Position2D";
 import { Vector2Mutable } from "../util/math/Vector2Mutable";
-import { ECS } from "./ECS";
+import { Game } from "./Game";
 
 describe(module.id, () => {
     const setup = () => {
-        const ecs = new ECS(5);
-        ecs.addComponentType(Lifetime);
-        ecs.finishRegistration();
-        return { ecs };
+        const game = new Game();
+        const scene = game.createScene("test");
+        scene.addComponentType(Lifetime);
+        scene.finishRegistration();
+        return { scene };
     };
 
     it("should be able to add and remove single components", () => {
-        const { ecs } = setup();
-        const entity = ecs.createEntity();
+        const { scene } = setup();
+        const entity = scene.createEntity();
         expect(entity).toBeTruthy();
 
         entity.addComponentLiteral(Lifetime, 0);

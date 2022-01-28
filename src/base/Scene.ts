@@ -1,28 +1,32 @@
-import {BaseSystem} from "./BaseSystem";
-import {ComponentType} from "./Component";
-import {ComponentStore} from "./ComponentStore";
-import {Entity} from "./Entity";
+import { GameEventTarget } from "../event/EventTarget";
+import { BaseSystem } from "./BaseSystem";
+import { ComponentType } from "./Component";
+import { ComponentStore } from "./ComponentStore";
+import { Entity } from "./Entity";
 
 interface ActiveEntity {
     entity: Entity;
     active: boolean;
 }
 
-export class ECS {
-    public readonly componentStore: ComponentStore = new ComponentStore(
-        this.initialPoolSize,
-    );
-
+export class Scene extends GameEventTarget {
     private entities: Map<number, ActiveEntity> = new Map();
     private entityIds: number[] = [];
-
     private systems: Map<
         number,
         BaseSystem<Array<ComponentType>, Array<ComponentType>>[]
     > = new Map();
     private systemPriorities: number[] = [];
 
-    constructor(private readonly initialPoolSize: number = 2000) {
+    public readonly componentStore: ComponentStore;
+
+    constructor(private readonly initialPoolSize: number = 2000, private readonly allowAdditionalEntities: boolean = true, globalStore?: ComponentStore, parentEventTarget?: GameEventTarget) {
+        super(parentEventTarget);
+        this.componentStore = new ComponentStore(
+            this.initialPoolSize,
+            globalStore,
+            this
+        );
         for (let i = 0; i < this.initialPoolSize; i++) {
             this.entityIds.push(i);
             this.entities.set(i, {
@@ -40,21 +44,11 @@ export class ECS {
         }
     }
 
-    public addComponentType(componentType: ComponentType) {
-        this.componentStore.registerComponentType(componentType);
-    }
-
-    public addComponentTypes(...componentTypes: ComponentType[]) {
-        componentTypes.forEach((component) =>
-            this.componentStore.registerComponentType(component),
-        );
-    }
-
     public addSystem<
         R extends Array<ComponentType>,
         E extends Array<ComponentType>,
     >(
-        systemInit: BaseSystem<R, E> | (new (ecs: ECS) => BaseSystem<R, E>),
+        systemInit: BaseSystem<R, E> | (new (scene: Scene) => BaseSystem<R, E>),
         priority = 0,
     ) {
         const system =
@@ -73,6 +67,17 @@ export class ECS {
         } else {
             systems.push(system);
         }
+        return system;
+    }
+
+    public addComponentType(componentType: ComponentType) {
+        this.componentStore.registerComponentType(componentType);
+    }
+
+    public addComponentTypes(...componentTypes: ComponentType[]) {
+        componentTypes.forEach((component) =>
+            this.componentStore.registerComponentType(component),
+        );
     }
 
     public finishRegistration() {
@@ -81,6 +86,9 @@ export class ECS {
 
     public createEntity(): Entity {
         const id = this.entityIds.pop();
+        if (!id && !this.allowAdditionalEntities) {
+            throw new Error(`Trying to create additional entities in a scene that does not allow more than ${this.initialPoolSize} entities`);
+        }
         const newId = id ?? this.entities.size;
         if (id == undefined) {
             this.entities.set(newId, {

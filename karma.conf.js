@@ -1,31 +1,60 @@
-let debug = false;
-function isDebug(argument) {
-    return argument === '--debug';
-}
-if (process.argv.some(isDebug)) {
-    debug = true;
-}
-const browser = debug ? "Chrome" : "ChromeHeadless";
+const debug = process.argv.includes('--debug');
+console.warn(`Debug mode is enabled - code coverage will be disabled`);
 
-const debugFiles = debug ? ['./test/karma-debug.js'] : [];
-const files = [...debugFiles, "src/**/*.ts"];
-
-module.exports = function (config) {
+module.exports = (config) => {
     config.set({
-        frameworks: ["jasmine", "karma-typescript"],
-        files,
-        preprocessors: {
-            "**/*.ts": "karma-typescript",
-        },
-        colors: true,
-        reporters: ["mocha", "kjhtml"],
-        browsers: [browser],
-        karmaTypescriptConfig: {
-            tsconfig: "./tsconfig.json",
-            coverageOptions: {
-                instrumentation: !debug,
+        browsers: ['ChromeHeadlessDebug'],
+        customLaunchers: {
+            ChromeHeadlessDebug: {
+                base: 'ChromeHeadless',
+                flags: [ '--remote-debugging-port=9333' ],
             },
         },
-        singleRun: !debug,
+
+        frameworks: ['jasmine', 'webpack'],
+        reporters: ['progress', ...(debug ? [] : ['coverage-istanbul'])],
+
+        files: [
+            { pattern: './**/*.spec.ts' }
+        ],
+
+        preprocessors: {
+            '**/*.ts': ['webpack', 'sourcemap'],
+        },
+
+        webpack: {
+            devtool: 'inline-source-map',
+            mode: 'development',
+            resolve: {
+                extensions: ['.js', '.ts', '.tsx', '.json']
+            },
+            module: {
+                rules: [
+                    {test: /\.tsx?$/, use: [...(debug ? [] : ['coverage-istanbul-loader']), 'ts-loader']}
+                ]
+            },
+            output: {
+                // Outputs absolute file paths instead of webpack:///path/to/file.extension
+                // This makes stacktrace paths clickable in a shell (e.g. VS Code)
+                devtoolModuleFilenameTemplate: function(info) {
+                    return info.absoluteResourcePath;
+                },
+            },
+        },
+        webpackMiddleware: { stats: 'errors-only' },
+
+        coverageIstanbulReporter: {
+            dir: '.coverage',
+            reports: ['html', 'text-summary'],
+            'report-config': {
+                html: { subdir: 'html' }
+            },
+            // Don't run coverage on test/
+            instrumentation: {
+                excludes: [
+                    '**/test/**'
+                ]
+            }
+        }
     });
 };

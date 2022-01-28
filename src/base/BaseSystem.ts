@@ -1,7 +1,11 @@
 import {FirstArgument} from "../util/types/Functions";
 import {ComponentType} from "./Component";
-import {ECS} from "./ECS";
+import {Game} from "../base/Game";
 import {Entity} from "./Entity";
+import { Scene } from "../base/Scene";
+import { ComponentCreated, ComponentCreatedEvent, ComponentRemoved, ComponentRemovedEvent } from "./ComponentStore";
+import { GameEvent } from "../event/EventTarget";
+import { SimpleGameEvent } from "../event/Event";
 
 export interface IntervalStorage {
     rate: number;
@@ -18,17 +22,13 @@ export abstract class BaseSystem<
     private ticked = false;
 
     constructor(
-        protected readonly ecs: ECS,
+        protected readonly scene: Scene,
         protected readonly required: Required,
         protected readonly excluded: Excluded,
         protected readonly doEntityUpdate = true
     ) {
-        this.ecs.componentStore.addCreateListener(
-            this.notifyCreated.bind(this),
-        );
-        this.ecs.componentStore.addRemoveListener(
-            this.notifyRemoved.bind(this),
-        );
+        this.scene.listen(ComponentCreated, this.notifyCreated.bind(this));
+        this.scene.listen(ComponentRemoved, this.notifyRemoved.bind(this));
         this.requiredIds = new Set([...this.required.map((it) => it.key)]);
         this.excludedIds = new Set([...this.excluded.map((it) => it.key)]);
     }
@@ -57,7 +57,7 @@ export abstract class BaseSystem<
         this.systemUpdate(elapsedTimeMs);
         if (this.doEntityUpdate) {
             for (const entityId of this.entities) {
-                const entity = this.ecs.getEntity(entityId);
+                const entity = this.scene.getEntity(entityId);
                 entity && this.entityUpdate(elapsedTimeMs, entity);
             }
         }
@@ -199,26 +199,22 @@ export abstract class BaseSystem<
     }
 
     private notifyCreated<T>(
-        componentType: ComponentType<string, T>,
-        entityId: number,
-        _data: T,
+        event: GameEvent<ComponentCreatedEvent<T>>
     ): void {
-        const entity = this.ecs.getEntity(entityId);
+        const entity = this.scene.getEntity(event.data.id);
         if (entity) {
-            this.shouldTrack(componentType, entity)
+            this.shouldTrack(event.data.type, entity)
                 ? this.entities.add(entity.id)
                 : this.entities.delete(entity.id);
         }
     }
 
     private notifyRemoved<T>(
-        componentType: ComponentType<string, T>,
-        entityId: number,
-        _data: T,
+        event: GameEvent<ComponentRemovedEvent<T>>
     ): void {
-        const entity = this.ecs.getEntity(entityId);
+        const entity = this.scene.getEntity(event.data.id);
         if (entity) {
-            this.shouldRemove(componentType, entity) && this.entities.delete(entity.id);
+            this.shouldRemove(event.data.type, entity) && this.entities.delete(entity.id);
         }
     }
 

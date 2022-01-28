@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "npx karma start",
-    "test:debug": "npx karma start --debug"
+    "debug": "npx karma start --debug"
   },
   "keywords": [],
   "author": "",
@@ -28,8 +28,13 @@
     "karma-jasmine": "^4.0.1",
     "karma-jasmine-html-reporter": "^1.7.0",
     "karma-mocha-reporter": "^2.2.5",
+    "karma-sourcemap-loader": "^0.3.8",
     "karma-typescript": "^5.5.2",
+    "karma-webpack": "^5.0.0",
     "prettier-eslint": "^13.0.0",
-    "ts-node": "^10.3.0"
+    "should": "^13.2.3",
+    "ts-loader": "^9.2.6",
+    "ts-node": "^10.3.0",
+    "webpack": "^5.67.0"
   }
 }
