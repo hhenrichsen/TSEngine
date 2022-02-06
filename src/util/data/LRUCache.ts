@@ -20,7 +20,6 @@ export class LRUCache<KeyType, ValueType> {
             const node = this.list.getTail();
             if (node) {
                 const key = node.data;
-                console.log(`Deleting ${key} due to length`);
                 const value = this.values.get(node.data);
                 this.list.removeNode(node);
                 this.values.delete(key);
@@ -30,11 +29,6 @@ export class LRUCache<KeyType, ValueType> {
                 }
             }
         }
-        this.print();
-    }
-
-    public print() {
-        this.list.print();
     }
 
     public get(key: KeyType): ValueType | undefined {
@@ -42,7 +36,6 @@ export class LRUCache<KeyType, ValueType> {
         if (node) {
             const newNode = this.list.topNode(node);
             this.nodes.set(key, newNode);
-            this.print();
             return this.values.get(key);
         }
         return undefined;

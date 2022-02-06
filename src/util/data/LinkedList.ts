@@ -110,7 +110,6 @@ export class LinkedList<ItemType> {
     }
 
     public removeNode(node: LinkedNode<ItemType>) {
-        this.print();
         if (this.tail == node) {
             this.tail = node.previous;
         }
@@ -128,11 +127,6 @@ export class LinkedList<ItemType> {
         node.next = undefined;
         node.previous = undefined;
         this.length--;
-        this.print();
-    }
-
-    public print() {
-        console.log([...this].join(" <=> ") + " (Length " + this.length + ")");
     }
 
     public topNode(node: LinkedNode<ItemType>) {
