@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "npx karma start",
-    "debug": "npx karma start --debug"
+    "test:debug": "npx karma start --debug",
+    "test:ci": "npx karma start --single-run"
   },
   "keywords": [],
   "author": "",
