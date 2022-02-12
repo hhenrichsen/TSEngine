@@ -12,7 +12,7 @@ describe(module.id, () => {
             expect(b).toBe(2);
             expect(c).toBe(3);
             expect(rest1.length).toBe(0);
-            expect(ll.size()).toBe(3);
+            expect(ll.length).toBe(3);
 
             ll.unshift(0);
 
@@ -22,7 +22,7 @@ describe(module.id, () => {
             expect(c2).toBe(2);
             expect(d2).toBe(3);
             expect(rest2.length).toBe(0);
-            expect(ll.size()).toBe(4);
+            expect(ll.length).toBe(4);
 
             ll.shift(2);
 
@@ -30,14 +30,15 @@ describe(module.id, () => {
             expect(a3).toBe(2);
             expect(b3).toBe(3);
             expect(rest3.length).toBe(0);
-            expect(ll.size()).toBe(2);
+            expect(ll.length).toBe(2);
 
-            ll.pop(1);
+            const [popped] = ll.pop(1);
+            expect(popped).toBe(3);
 
             const [a4, ...rest4] = ll;
             expect(a4).toBe(2);
             expect(rest4.length).toBe(0);
-            expect(ll.size()).toBe(1);
+            expect(ll.length).toBe(1);
         });
 
         it("should map properly", () => {
@@ -68,17 +69,17 @@ describe(module.id, () => {
             const n4 = ll.insertBack(3);
 
             ll.topNode(n4);
-            expect(ll.size()).toBe(4);
+            expect(ll.length).toBe(4);
             expect([...ll].length).toBe(4);
             expect([...ll]).toEqual([3, 0, 1, 2]);
 
             ll.bottomNode(n1);
-            expect(ll.size()).toBe(4);
+            expect(ll.length).toBe(4);
             expect([...ll].length).toBe(4);
             expect([...ll]).toEqual([3, 1, 2, 0]);
 
             ll.removeNode(n2);
-            expect(ll.size()).toBe(3);
+            expect(ll.length).toBe(3);
             expect([...ll].length).toBe(3);
             expect([...ll]).toEqual([3, 2, 0]);
         });

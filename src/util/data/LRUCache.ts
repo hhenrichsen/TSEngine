@@ -16,7 +16,7 @@ export class LRUCache<KeyType, ValueType> {
         const node = this.list.insertFront(key);
         this.nodes.set(key, node);
 
-        while (this.list.size() > this.capacity) {
+        while (this.list.length > this.capacity) {
             const node = this.list.getTail();
             if (node) {
                 const key = node.data;
@@ -39,5 +39,11 @@ export class LRUCache<KeyType, ValueType> {
             return this.values.get(key);
         }
         return undefined;
+    }
+
+    public clear() {
+        this.values.clear();
+        this.nodes.clear();
+        this.list.clear();
     }
 }
