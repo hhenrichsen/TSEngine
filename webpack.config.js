@@ -1,11 +1,16 @@
+const path = require('path');
+const webpack = require('webpack');
+const dev = process.argv.includes('--dev');
+const mode = dev ? 'development' : 'production';
+
 module.exports = {
+  mode,
   context: __dirname,
-  entry: './entrypoint.js',
   output: {
     path: path.resolve(__dirname),
-    filename: 'bundle.js'
+    filename: './build/bundle.js'
   },
-  devtool: 'eval-source-map',
+  devtool: dev ? 'eval-source-map' : undefined,
   resolve: {
     extensions: ['.ts', '.tsx', '.js']
   },
@@ -14,7 +19,7 @@ module.exports = {
       {
         test: /\.ts$/,
         use: {
-          loader: 'tsickle-loader',
+          loader: 'ts-loader',
         }
       },
     ]
@@ -24,16 +29,6 @@ module.exports = {
   ],
   optimization: {
     minimize: true,
-    minimizer: [
-      new ClosureCompilerPlugin({
-        mode: 'STANDARD', // a little misleading -- the actual compilation level is below
-        childCompilations: true
-      }, {
-        externs: [path.resolve(__dirname, 'dist', 'externs.js')],
-        languageOut: 'ECMASCRIPT5',
-        compilation_level: 'ADVANCED'
-      })
-    ],
     usedExports: true,
     splitChunks: {
       minSize: 0

@@ -1,4 +1,4 @@
-import { getOrSetDefault } from "../util/types/Map";
+import { Maps } from '../util/Maps';
 import { SimpleGameEvent, GameEventKey, GameEventType } from "./Event";
 
 export type GameEvent<WrappedType> = SimpleGameEvent<WrappedType> & {
@@ -12,7 +12,7 @@ export class GameEventTarget {
     private listeners: Map<GameEventKey, ((data: GameEvent<unknown>) => void)[]> = new Map();
 
     public listen<T>(eventType: GameEventType<string, T>, listener: (data: GameEvent<T>) => void) {
-        const listenerList = getOrSetDefault(this.listeners, eventType, []);
+        const listenerList = Maps.getOrSetDefault(this.listeners, eventType, []);
         this.parent?.listen(eventType, listener);
         listenerList.push(listener);
     }

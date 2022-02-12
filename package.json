@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "npx webpack",
+    "clean": "npx rimraf build",
     "test": "npx karma start",
     "test:debug": "npx karma start --debug",
     "test:ci": "npx karma start --single-run"
@@ -31,11 +33,13 @@
     "karma-jasmine": "^4.0.1",
     "karma-jasmine-html-reporter": "^1.7.0",
     "karma-sourcemap-loader": "^0.3.8",
-    "karma-typescript": "^5.5.2",
+    "karma-typescript": "^5.5.3",
     "karma-webpack": "^5.0.0",
+    "rimraf": "^3.0.2",
     "should": "^13.2.3",
     "ts-loader": "^9.2.6",
     "ts-node": "^10.3.0",
-    "webpack": "^5.67.0"
+    "webpack": "^5.67.0",
+    "webpack-cli": "^4.9.2"
   }
 }
