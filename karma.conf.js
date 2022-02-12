@@ -1,5 +1,5 @@
 const debug = process.argv.includes('--debug');
-console.warn(`Debug mode is enabled - code coverage will be disabled`);
+debug && console.warn(`Debug mode is enabled - code coverage will be disabled`);
 
 module.exports = (config) => {
     config.set({
