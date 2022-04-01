@@ -2,9 +2,9 @@ import { GameEventType } from "./Event";
 import { GameEventTarget } from "./EventTarget";
 
 describe(module.id, () => {
-    const TestEvent = new GameEventType<"test", {count: number}>("test");
+    const TestEvent = new GameEventType<"test", { count: number }>("test");
 
-    it("should call events", () => {
+    test("should call events", () => {
         const target = new GameEventTarget();
         let data = 0;
 
@@ -12,11 +12,11 @@ describe(module.id, () => {
             data = event.data.count;
         });
 
-        target.raise(TestEvent.with({count: 1}));
+        target.raise(TestEvent.with({ count: 1 }));
         expect(data).toBe(1);
     });
 
-    it("should cancel events", () => {
+    test("should cancel events", () => {
         const target = new GameEventTarget();
         let data = 0;
 
@@ -29,11 +29,11 @@ describe(module.id, () => {
             data = -event.data.count;
         });
 
-        target.raise(TestEvent.with({count: 1}));
+        target.raise(TestEvent.with({ count: 1 }));
         expect(data).toBe(1);
     });
 
-    it("should stop propagating events", () => {
+    test("should stop propagating events", () => {
         const parent = new GameEventTarget();
         const target = new GameEventTarget(parent);
         let data = 0;
@@ -51,7 +51,7 @@ describe(module.id, () => {
             data *= event.data.count;
         });
 
-        target.raise(TestEvent.with({count: 2}));
+        target.raise(TestEvent.with({ count: 2 }));
         expect(data).toBe(-2);
     });
 });

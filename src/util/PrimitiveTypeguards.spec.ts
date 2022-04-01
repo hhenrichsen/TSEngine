@@ -6,127 +6,125 @@ import {
     isString,
     isTruthy,
 } from "./PrimitiveTypeguards";
-import { expectEachToBe } from "./Tests";
 
 describe(module.id, () => {
-
     describe("isString", () => {
-        it("should properly detect strings", () => {
-            const trueValues: unknown[] = ["hello world", ""];
-            const falseValues: unknown[] = [
-                undefined,
-                null,
-                NaN,
-                5,
-                {},
-                {message: "hello"},
-                3.14,
-                -Infinity,
-                true,
-                false,
-                0,
-            ];
-            expectEachToBe(isString, trueValues, true);
-            expectEachToBe(isString, falseValues, false);
-        });
+        test.each([
+            { name: "Undefined", value: undefined, expected: false },
+            { name: "null", value: null, expected: false },
+            { name: "NaN", value: NaN, expected: false },
+            { name: "5", value: 5, expected: false },
+            { name: "Empty Object", value: {}, expected: false },
+            { name: "Object", value: { message: "hello" }, expected: false },
+            { name: "-Infinity", value: -Infinity, expected: false },
+            { name: "true", value: true, expected: false },
+            { name: "false", value: false, expected: false },
+            { name: "0", value: 0, expected: false },
+            { name: "hello world", value: "hello world", expected: true },
+        ])(
+            "IsString($name): Should be $expected",
+            ({ name, value, expected }) => {
+                expect(isString(value)).toBe(expected);
+            }
+        );
     });
 
     describe("isNumber", () => {
-        it("should properly detect numbers", () => {
-            const trueValues: unknown[] = [5, 3.14, -Infinity, NaN, 0];
-            const falseValues: unknown[] = [
-                undefined,
-                null,
-                {},
-                {message: "hello"},
-                "hello world",
-                "",
-                true,
-                false,
-            ];
-            expectEachToBe(isNumber, trueValues, true);
-            expectEachToBe(isNumber, falseValues, false);
-        });
+        test.each([
+            { name: "Undefined", value: undefined, expected: false },
+            { name: "null", value: null, expected: false },
+            { name: "NaN", value: NaN, expected: true },
+            { name: "5", value: 5, expected: true },
+            { name: "Empty Object", value: {}, expected: false },
+            { name: "Object", value: { message: "hello" }, expected: false },
+            { name: "-Infinity", value: -Infinity, expected: true },
+            { name: "true", value: true, expected: false },
+            { name: "false", value: false, expected: false },
+            { name: "0", value: 0, expected: true },
+            { name: "hello world", value: "hello world", expected: false },
+        ])(
+            "IsNumber($name): Should be $expected",
+            ({ name, value, expected }) => {
+                expect(isNumber(value)).toBe(expected);
+            }
+        );
     });
-
     describe("isInt", () => {
-        it("should properly detect ints", () => {
-            const trueValues: unknown[] = [5, 0];
-            const falseValues: unknown[] = [
-                undefined,
-                null,
-                NaN,
-                3.14,
-                -Infinity,
-                {},
-                {message: "hello"},
-                true,
-                false,
-            ];
-            expectEachToBe(isInt, trueValues, true);
-            expectEachToBe(isInt, falseValues, false);
+        test.each([
+            { name: "Undefined", value: undefined, expected: false },
+            { name: "null", value: null, expected: false },
+            { name: "NaN", value: NaN, expected: false },
+            { name: "5", value: 5, expected: true },
+            { name: "Empty Object", value: {}, expected: false },
+            { name: "Object", value: { message: "hello" }, expected: false },
+            { name: "-Infinity", value: -Infinity, expected: false },
+            { name: "true", value: true, expected: false },
+            { name: "false", value: false, expected: false },
+            { name: "0", value: 0, expected: true },
+            { name: "hello world", value: "hello world", expected: false },
+        ])("IsInt($name): Should be $expected", ({ name, value, expected }) => {
+            expect(isInt(value)).toBe(expected);
         });
     });
-
     describe("isBoolean", () => {
-        it("should properly detect booleans", () => {
-            const trueValues: unknown[] = [false, true];
-            const falseValues: unknown[] = [
-                undefined,
-                null,
-                NaN,
-                5,
-                {},
-                {message: "hello"},
-                "",
-                "hello",
-                3.14,
-                -Infinity,
-                0,
-            ];
-            expectEachToBe(isBoolean, trueValues, true);
-            expectEachToBe(isBoolean, falseValues, false);
-        });
+        test.each([
+            { name: "Undefined", value: undefined, expected: false },
+            { name: "null", value: null, expected: false },
+            { name: "NaN", value: NaN, expected: false },
+            { name: "5", value: 5, expected: false },
+            { name: "Empty Object", value: {}, expected: false },
+            { name: "Object", value: { message: "hello" }, expected: false },
+            { name: "-Infinity", value: -Infinity, expected: false },
+            { name: "true", value: true, expected: true },
+            { name: "false", value: false, expected: true },
+            { name: "0", value: 0, expected: false },
+            { name: "hello world", value: "hello world", expected: false },
+        ])(
+            "IsBoolean($name): Should be $expected",
+            ({ name, value, expected }) => {
+                expect(isBoolean(value)).toBe(expected);
+            }
+        );
     });
-
-    describe("isNotNullOrUndefined", () => {
-        it("should properly find nulls and undefined", () => {
-            const trueValues: unknown[] = [
-                "hello world",
-                "",
-                NaN,
-                5,
-                {},
-                {message: "hello"},
-                3.14,
-                -Infinity,
-                true,
-                false,
-            ];
-            const falseValues: unknown[] = [undefined, null];
-            expectEachToBe(isNotNullOrUndefined, trueValues, true);
-            expectEachToBe(isNotNullOrUndefined, falseValues, false);
-        });
+    describe("IsNotNullOrUndefined", () => {
+        test.each([
+            { name: "Undefined", value: undefined, expected: false },
+            { name: "null", value: null, expected: false },
+            { name: "NaN", value: NaN, expected: true },
+            { name: "5", value: 5, expected: true },
+            { name: "Empty Object", value: {}, expected: true },
+            { name: "Object", value: { message: "hello" }, expected: true },
+            { name: "-Infinity", value: -Infinity, expected: true },
+            { name: "true", value: true, expected: true },
+            { name: "false", value: false, expected: true },
+            { name: "0", value: 0, expected: true },
+            { name: "hello world", value: "hello world", expected: true },
+        ])(
+            "IsNotNullOrUndefined($name): Should be $expected",
+            ({ name, value, expected }) => {
+                expect(isNotNullOrUndefined(value)).toBe(expected);
+            }
+        );
     });
 
     describe("isTruthy", () => {
-        it("should properly find truthy values", () => {
-            const trueValues: unknown[] = [
-                "hello world",
-                5,
-                {message: "hello"},
-                [],
-                {},
-                -3.14,
-                -Infinity,
-                true,
-            ];
-            expectEachToBe(isTruthy, trueValues, true);
-        });
-
-        it("should fail on all other values", () => {
-            const falseValues: unknown[] = [undefined, null, "", NaN, false, 0];
-            expectEachToBe(isTruthy, falseValues, false);
-        });
+        test.each([
+            { name: "Undefined", value: undefined, expected: false },
+            { name: "null", value: null, expected: false },
+            { name: "NaN", value: NaN, expected: false },
+            { name: "5", value: 5, expected: true },
+            { name: "Empty Object", value: {}, expected: true },
+            { name: "Object", value: { message: "hello" }, expected: true },
+            { name: "-Infinity", value: -Infinity, expected: true },
+            { name: "true", value: true, expected: true },
+            { name: "false", value: false, expected: false },
+            { name: "0", value: 0, expected: false },
+            { name: "hello world", value: "hello world", expected: true },
+        ])(
+            "isTruthy($name): Should be $expected",
+            ({ name, value, expected }) => {
+                expect(isTruthy(value)).toBe(expected);
+            }
+        );
     });
 });

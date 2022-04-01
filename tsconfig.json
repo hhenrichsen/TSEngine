@@ -1,16 +1,19 @@
 {
     "compilerOptions": {
-        "target": "ES6",
-        "module": "commonjs",
-        "outDir": "build",
-        "noImplicitAny": true,
-        "noImplicitOverride": true,
-        "noImplicitReturns": true,
-        "noFallthroughCasesInSwitch": true,
-        "alwaysStrict": true,
-        "strictNullChecks": true,
-        "allowUnusedLabels": false,
-        "downlevelIteration": true,
-        "experimentalDecorators": true
-    }
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "baseUrl": ".",
+        "resolveJsonModule": true,
+        "target": "ESNext",
+        "module": "ESNext",
+        "moduleResolution": "node",
+        "declaration": true,
+        "outDir": "lib",
+        "strict": false,
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "lib": ["ESNext"]
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "dist", "src/**/*.spec.*"]
 }
