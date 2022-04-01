@@ -1,12 +1,22 @@
 import { Position2D } from "../components/Position2D";
 import { Velocity2D } from "../components/Velocity2D";
-import { expectVector2CloseTo } from "../util/math/Vector2.test";
+import { createTestScene } from "../testutils/SceneMock";
 import { Vector2 } from "../util/math/Vector2";
 import { VelocitySystem } from "./VelocitySystem";
-import { createTestScene } from "../base/Game.test";
+
+export function expectVector2CloseTo(
+    vector: Vector2 | undefined,
+    x: number,
+    y: number,
+    threshold = 0.0001
+) {
+    expect(vector).toBeTruthy();
+    expect(vector.x).toBeCloseTo(x, threshold);
+    expect(vector.y).toBeCloseTo(y, threshold);
+}
 
 describe(module.id, () => {
-    it("should move entities appropriately", () => {
+    test("should move entities appropriately", () => {
         const { scene, game } = createTestScene([Position2D, Velocity2D]);
 
         scene.addSystem(VelocitySystem);
@@ -27,5 +37,4 @@ describe(module.id, () => {
         const positionTick3 = ent1.getComponent(Position2D);
         expectVector2CloseTo(positionTick3, 3.016, 0);
     });
-
 });
