@@ -2,7 +2,7 @@ import { Sets } from "./Sets";
 
 describe(module.id, () => {
     describe("union()", () => {
-        it("should work with an empty set", () => {
+        test("should work with an empty set", () => {
             const setA = new Set<string>(["A", "B", "C"]);
             const setB = new Set<string>([]);
             const setC = Sets.union(setA, setB);
@@ -12,14 +12,14 @@ describe(module.id, () => {
             expect(setC).toContain("C");
         });
 
-        it("should work with empty sets", () => {
+        test("should work with empty sets", () => {
             const setA = new Set<string>([]);
             const setB = new Set<string>([]);
             const setC = Sets.union(setA, setB);
             expect(setC.size).toBe(0);
         });
 
-        it("should work in the general case", () => {
+        test("should work in the general case", () => {
             const setA = new Set<string>(["A", "B", "C"]);
             const setB = new Set<string>(["C", "D", "E"]);
             const setC = Sets.union(setA, setB);
@@ -32,21 +32,21 @@ describe(module.id, () => {
     });
 
     describe("intersection()", () => {
-        it("should work with an empty set", () => {
+        test("should work with an empty set", () => {
             const setA = new Set<string>(["A", "B", "C"]);
             const setB = new Set<string>([]);
             const setC = Sets.intersection(setA, setB);
             expect(setC.size).toBe(0);
         });
 
-        it("should work with empty sets", () => {
+        test("should work with empty sets", () => {
             const setA = new Set<string>([]);
             const setB = new Set<string>([]);
             const setC = Sets.intersection(setA, setB);
             expect(setC.size).toBe(0);
         });
 
-        it("should work in the general case", () => {
+        test("should work in the general case", () => {
             const setA = new Set<string>(["A", "B", "C"]);
             const setB = new Set<string>(["C", "D", "E"]);
             const setC = Sets.intersection(setA, setB);
@@ -55,21 +55,21 @@ describe(module.id, () => {
     });
 
     describe("difference()", () => {
-        it("should work with an empty set", () => {
+        test("should work with an empty set", () => {
             const setA = new Set<string>(["A", "B", "C"]);
             const setB = new Set<string>([]);
             const setC = Sets.difference(setA, setB);
             expect(setC.size).toBe(setA.size);
         });
 
-        it("should work with empty sets", () => {
+        test("should work with empty sets", () => {
             const setA = new Set<string>([]);
             const setB = new Set<string>([]);
             const setC = Sets.difference(setA, setB);
             expect(setC.size).toBe(0);
         });
 
-        it("should work in the general case", () => {
+        test("should work in the general case", () => {
             const setA = new Set<string>(["A", "B", "C"]);
             const setB = new Set<string>(["C", "D", "E"]);
             const setC = Sets.difference(setA, setB);
