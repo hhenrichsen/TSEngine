@@ -22,7 +22,7 @@ jobs:
       - name: Run Tests
         run: |
           npm ci
-          npm test -- --ci --coverage=true
+          npm test -- --ci --coverage=true --max-workers ${{ steps.cpu-cores.outputs.count }}
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
       
