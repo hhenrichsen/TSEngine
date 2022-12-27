@@ -22,4 +22,27 @@ describe(module.id, () => {
         expect(cache.get(3)).toBeTruthy();
         expect(cache.get(4)).toBeTruthy();
     });
+    
+    it("should overwrite duplicate keys", () => {
+        const cache = new LRUCache<number, number>(3);
+        cache.set(0, 1);
+        cache.set(0, 2);
+        cache.set(0, 3);
+        const result = cache.get(0);
+        
+        expect(result).toBe(3);
+    });
+    
+    it("should clear properly", () => {
+        const cache = new LRUCache<number, number>(3);
+        cache.set(0, 1);
+        cache.set(1, 2);
+        cache.set(2, 3);
+
+        expect(cache.size()).toBe(3);
+
+        cache.clear();
+
+        expect(cache.size()).toBe(0);
+    });
 });
