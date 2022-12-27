@@ -18,15 +18,15 @@ class TestBaseSystem extends BaseSystem<
 }
 
 describe(module.id, () => {
-    let scene: Scene;
-    let system: TestBaseSystem;
-
-    beforeEach(() => {
-        scene = createTestScene([TestComponent1, TestComponent2]).scene;
-        system = scene.addSystem(TestBaseSystem);
-    });
+    const setup = () => {
+        const scene = createTestScene([TestComponent1, TestComponent2]).scene;
+        const system = scene.addSystem(TestBaseSystem);
+        return {scene, system};
+    };
 
     test("should only track entities with all required components", () => {
+        const {scene, system} = setup();
+
         const entity1 = scene.createEntity();
         const entity2 = scene.createEntity();
 
