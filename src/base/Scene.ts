@@ -57,7 +57,6 @@ export class Scene extends GameEventTarget {
                 : new systemInit(this);
         if (!this.systemPriorities.includes(priority)) {
             this.systemPriorities.push(priority);
-            this.systemPriorities.sort();
         }
 
         const systems = this.systems.get(priority);
@@ -82,6 +81,7 @@ export class Scene extends GameEventTarget {
 
     public finishRegistration() {
         this.componentStore.finishRegistration();
+        this.systemPriorities.sort();
     }
 
     public createEntity(): Entity {
