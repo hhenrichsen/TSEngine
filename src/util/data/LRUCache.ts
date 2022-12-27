@@ -46,4 +46,8 @@ export class LRUCache<KeyType, ValueType> {
         this.nodes.clear();
         this.list.clear();
     }
+    
+    public size() {
+        return this.values.size;
+    }
 }
