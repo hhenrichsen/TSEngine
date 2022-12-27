@@ -11,7 +11,9 @@ export interface Vector2Like {
 /**
  * Immutable Vector2 class.
  */
-export class Vector2 implements Vector2Like, Hashable, Representable, Equatable<Vector2Like> {
+export class Vector2
+    implements Vector2Like, Hashable, Representable, Equatable<Vector2Like>
+{
     /**
      * A constant zero vector.
      */
@@ -43,8 +45,13 @@ export class Vector2 implements Vector2Like, Hashable, Representable, Equatable<
         this._x = x;
         this._y = y;
     }
-    
-    static random(maxX: number = 1, minX: number = 0, maxY: number = maxX, minY: number = minX): Vector2 {
+
+    static random(
+        maxX = 1,
+        minX = 0,
+        maxY: number = maxX,
+        minY: number = minX,
+    ): Vector2 {
         const x = minX + Math.random() * (maxX - minX);
         const y = minY + Math.random() * (maxY - minY);
         return new Vector2(x, y);
@@ -54,7 +61,10 @@ export class Vector2 implements Vector2Like, Hashable, Representable, Equatable<
      * @returns A normalized random vector.
      */
     static randomNormal(): Vector2 {
-        return Vector2.normalize({ x: Math.random() * 2 - 1, y: Math.random() * 2 - 1 });
+        return Vector2.normalize({
+            x: Math.random() * 2 - 1,
+            y: Math.random() * 2 - 1,
+        });
     }
 
     /**
@@ -143,7 +153,10 @@ export class Vector2 implements Vector2Like, Hashable, Representable, Equatable<
         return new Vector2(target.x / magnitude, target.y / magnitude);
     }
 
-    public static scale(target: Vector2Like, scalar: number | Vector2Like): Vector2 {
+    public static scale(
+        target: Vector2Like,
+        scalar: number | Vector2Like,
+    ): Vector2 {
         if (isNumber(scalar)) {
             return new Vector2(target.x * scalar, target.y * scalar);
         }
@@ -153,7 +166,11 @@ export class Vector2 implements Vector2Like, Hashable, Representable, Equatable<
     public static add(target: Vector2Like, constant: number): Vector2;
     public static add(target: Vector2Like, x: number, y: number): Vector2;
     public static add(target: Vector2Like, vector: Vector2Like): Vector2;
-    public static add(target: Vector2Like, value: number | Vector2Like, other?: number): Vector2 {
+    public static add(
+        target: Vector2Like,
+        value: number | Vector2Like,
+        other?: number,
+    ): Vector2 {
         if (!isNumber(value)) {
             return new Vector2(target.x + value.x, target.y + value.y);
         }
@@ -175,7 +192,11 @@ export class Vector2 implements Vector2Like, Hashable, Representable, Equatable<
      * @param scalar The amount to scale the other vector by.
      * @returns The resulting vector of this + other * scalar.
      */
-    public static addScaled(target: Vector2Like, other: Vector2Like, scalar: number): Vector2 {
+    public static addScaled(
+        target: Vector2Like,
+        other: Vector2Like,
+        scalar: number,
+    ): Vector2 {
         return new Vector2(
             target.x + other.x * scalar,
             target.y + other.y * scalar,
@@ -187,13 +208,18 @@ export class Vector2 implements Vector2Like, Hashable, Representable, Equatable<
     }
 
     /**
-     * Subtracts another vector from this vector, scaling the other by a given factor.
+     * Subtracts another vector from this vector, scaling the other by a given
+     * factor.
      *
      * @param other The other vector to subtract.
      * @param scalar The amount to scale the other vector by.
      * @returns The resulting vector of this - other * scalar.
      */
-    public static subtractScaled(target: Vector2Like, other: Vector2Like, scalar: number): Vector2 {
+    public static subtractScaled(
+        target: Vector2Like,
+        other: Vector2Like,
+        scalar: number,
+    ): Vector2 {
         return new Vector2(
             target.x - other.x * scalar,
             target.y - other.y * scalar,
@@ -211,7 +237,7 @@ export class Vector2 implements Vector2Like, Hashable, Representable, Equatable<
             target.x * Math.sin(radians) + target.y * Math.cos(radians),
         );
     }
-    
+
     public static toAngleRadians(target: Vector2Like): number {
         return Math.atan2(target.y, target.x);
     }
@@ -228,7 +254,11 @@ export class Vector2 implements Vector2Like, Hashable, Representable, Equatable<
         return `<${target.x}, ${target.y}>`;
     }
 
-    public static equals(target: Vector2Like, other: unknown, threshold = 0): boolean {
+    public static equals(
+        target: Vector2Like,
+        other: unknown,
+        threshold = 0,
+    ): boolean {
         return (
             other !== undefined &&
             typeof other === "object" &&
@@ -247,9 +277,16 @@ export class Vector2 implements Vector2Like, Hashable, Representable, Equatable<
     public static hashCode(target: Vector2Like): number {
         return 31 * target.x + target.y;
     }
-    
-    public static isNear(target: Vector2Like, other: Vector2Like, threshold: number = 0.0001): boolean {
-        return Math.abs(target.x - other.x) < threshold && Math.abs(target.y - other.y) < threshold;
+
+    public static isNear(
+        target: Vector2Like,
+        other: Vector2Like,
+        threshold = 0.0001,
+    ): boolean {
+        return (
+            Math.abs(target.x - other.x) < threshold &&
+            Math.abs(target.y - other.y) < threshold
+        );
     }
 
     public [Symbol.iterator]() {
@@ -258,11 +295,11 @@ export class Vector2 implements Vector2Like, Hashable, Representable, Equatable<
             next: () => {
                 const res = {
                     value: first ? this._x : this._y,
-                    done: !first
-                }; 
+                    done: !first,
+                };
                 first = false;
                 return res;
-            }
+            },
         };
     }
 

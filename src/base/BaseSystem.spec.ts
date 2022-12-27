@@ -4,10 +4,10 @@ import { ComponentType } from "./Component";
 import { Scene } from "./Scene";
 
 const TestComponent1 = new ComponentType<"testComponent1", "1">(
-    "testComponent1"
+    "testComponent1",
 );
 const TestComponent2 = new ComponentType<"testComponent2", "2">(
-    "testComponent2"
+    "testComponent2",
 );
 class TestBaseSystem extends BaseSystem<
     [typeof TestComponent1, typeof TestComponent2]
@@ -21,11 +21,11 @@ describe(module.id, () => {
     const setup = () => {
         const scene = createTestScene([TestComponent1, TestComponent2]).scene;
         const system = scene.addSystem(TestBaseSystem);
-        return {scene, system};
+        return { scene, system };
     };
 
     test("should only track entities with all required components", () => {
-        const {scene, system} = setup();
+        const { scene, system } = setup();
 
         const entity1 = scene.createEntity();
         const entity2 = scene.createEntity();

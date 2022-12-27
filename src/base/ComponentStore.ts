@@ -1,7 +1,7 @@
 import { GameEventType } from "../event/Event";
 import { GameEventTarget } from "../event/EventTarget";
 import { isNullOrUndefined } from "../util/PrimitiveTypeguards";
-import {Component, ComponentType} from "./Component";
+import { Component, ComponentType } from "./Component";
 
 interface InternalComponent<T> {
     data?: T;
@@ -13,7 +13,10 @@ export interface ComponentCreatedEvent<T> {
     data: T;
 }
 
-export const ComponentCreated = new GameEventType<"ComponentCreated", ComponentCreatedEvent<unknown>>("ComponentCreated");
+export const ComponentCreated = new GameEventType<
+    "ComponentCreated",
+    ComponentCreatedEvent<unknown>
+>("ComponentCreated");
 
 export interface ComponentRemovedEvent<T> {
     type: ComponentType<string, T>;
@@ -21,7 +24,10 @@ export interface ComponentRemovedEvent<T> {
     data: T;
 }
 
-export const ComponentRemoved = new GameEventType<"ComponentRemoved", ComponentRemovedEvent<unknown>>("ComponentRemoved");
+export const ComponentRemoved = new GameEventType<
+    "ComponentRemoved",
+    ComponentRemovedEvent<unknown>
+>("ComponentRemoved");
 
 export interface ComponentUpdatedEvent<T> {
     type: ComponentType<string, T>;
@@ -30,14 +36,20 @@ export interface ComponentUpdatedEvent<T> {
     newData: T;
 }
 
-export const ComponentUpdated = new GameEventType<"ComponentUpdated", ComponentUpdatedEvent<unknown>>("ComponentUpdated");
+export const ComponentUpdated = new GameEventType<
+    "ComponentUpdated",
+    ComponentUpdatedEvent<unknown>
+>("ComponentUpdated");
 
 export interface ComponentTypeCreatedEvent {
     type: string;
     forced: boolean;
 }
 
-export const ComponentTypeCreated = new GameEventType<"ComponentTypeCreated", ComponentTypeCreatedEvent>("ComponentTypeCreated");
+export const ComponentTypeCreated = new GameEventType<
+    "ComponentTypeCreated",
+    ComponentTypeCreatedEvent
+>("ComponentTypeCreated");
 
 export class ComponentStore extends GameEventTarget {
     private registrationFinished = false;
@@ -45,7 +57,11 @@ export class ComponentStore extends GameEventTarget {
     private pools: Record<string, InternalComponent<any>[]> = {};
     private unusedIds: Record<string, number[]> = {};
 
-    constructor(private readonly poolSize: number = 2000, private readonly parentStore?: ComponentStore, parentEventTarget?: GameEventTarget) {
+    constructor(
+        private readonly poolSize: number = 2000,
+        private readonly parentStore?: ComponentStore,
+        parentEventTarget?: GameEventTarget,
+    ) {
         super(parentEventTarget);
     }
 
@@ -58,7 +74,12 @@ export class ComponentStore extends GameEventTarget {
         wasForced = false,
     ) {
         const existingComponent = this.componentTypes[componentType.key];
-        this.raise(ComponentTypeCreated.with({type: componentType.key, forced: wasForced}));
+        this.raise(
+            ComponentTypeCreated.with({
+                type: componentType.key,
+                forced: wasForced,
+            }),
+        );
         if (existingComponent) {
             throw new Error(
                 `A component already exists with componentName ${componentType.key}, and the force parameter was not set when registering it.`,
@@ -95,7 +116,7 @@ export class ComponentStore extends GameEventTarget {
             pool.push({});
         }
         pool[newId].data = data;
-        this.raise(ComponentCreated.with({type, id: newId, data}));
+        this.raise(ComponentCreated.with({ type, id: newId, data }));
         return newId;
     }
 
@@ -142,7 +163,14 @@ export class ComponentStore extends GameEventTarget {
                 `Trying to access unknown component instance ${type.key} ${index}.`,
             );
         }
-        this.raise(ComponentUpdated.with({type, id: index, oldData: element.data, newData: data}));
+        this.raise(
+            ComponentUpdated.with({
+                type,
+                id: index,
+                oldData: element.data,
+                newData: data,
+            }),
+        );
         element.data = data;
     }
 
@@ -159,7 +187,13 @@ export class ComponentStore extends GameEventTarget {
                 `Trying to remove unknown component type ${type.key}. Was it registered?`,
             );
         }
-        this.raise(ComponentRemoved.with({type, id: index, data: pool[index].data}));
+        this.raise(
+            ComponentRemoved.with({
+                type,
+                id: index,
+                data: pool[index].data,
+            }),
+        );
         pool[index].data = null;
         ids.push(index);
     }
@@ -176,7 +210,7 @@ export class ComponentStore extends GameEventTarget {
             this.unusedIds[componentTypeName] = [];
             for (let i = 0; i < this.poolSize; i++) {
                 this.unusedIds[componentTypeName].push(i);
-                this.pools[componentTypeName].push({data: undefined});
+                this.pools[componentTypeName].push({ data: undefined });
             }
         }
     }

@@ -3,7 +3,7 @@ import { Game } from "../base/Game";
 
 export function createTestScene(
     components: ComponentType<string, unknown>[],
-    name = "test"
+    name = "test",
 ) {
     const game = new Game();
     const scene = game.createScene(name);

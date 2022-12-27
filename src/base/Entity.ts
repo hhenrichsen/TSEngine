@@ -1,5 +1,5 @@
-import {Component, ComponentType} from "./Component";
-import {ComponentStore} from "./ComponentStore";
+import { Component, ComponentType } from "./Component";
+import { ComponentStore } from "./ComponentStore";
 
 export class Entity {
     private components: Map<string, number> = new Map();
@@ -11,7 +11,7 @@ export class Entity {
 
     /**
      * Gets a given component from this entity.
-     * 
+     *
      * @param componentType The type of component to get.
      * @returns The component data, if it exists.
      */
@@ -27,8 +27,8 @@ export class Entity {
 
     /**
      * To be used when pass-by-reference doesn't work on the given type.
-     * 
-     * @param componentType The type to update. 
+     *
+     * @param componentType The type to update.
      * @param data The new data to set to this component.
      */
     public updateComponent<T>(
@@ -44,7 +44,7 @@ export class Entity {
 
     /**
      * Removes a component from this entity.
-     * 
+     *
      * @param componentType The type of component to remove.
      */
     public removeComponent<T>(componentType: ComponentType<string, T>) {
@@ -58,7 +58,7 @@ export class Entity {
 
     /**
      * Looks for a component on this entity.
-     * 
+     *
      * @param componentType The type of component to look for.
      * @returns If the component exists on this entity.
      */
@@ -68,7 +68,7 @@ export class Entity {
 
     /**
      * Adds a pre-packaged component to this entity.
-     * 
+     *
      * @param component The component to add.
      */
     public addComponent<T>(component: Component<T>) {
@@ -81,7 +81,7 @@ export class Entity {
 
     /**
      * Adds a component to this entity.
-     * 
+     *
      * @param componentType The type of component to add.
      * @param data The data to add to the component.
      */

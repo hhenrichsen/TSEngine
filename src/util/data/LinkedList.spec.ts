@@ -65,7 +65,7 @@ describe(module.id, () => {
             const ll = new LinkedList();
             const n1 = ll.insertBack(0);
             const n2 = ll.insertBack(1);
-            const n3 = ll.insertBack(2);
+            ll.insertBack(2);
             const n4 = ll.insertBack(3);
 
             ll.bringNodeToTop(n4);

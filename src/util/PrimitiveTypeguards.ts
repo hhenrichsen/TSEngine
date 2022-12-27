@@ -1,3 +1,5 @@
+export type Validator<T> = (value: unknown) => value is T;
+
 export function isNullOrUndefined<T>(
     value: T | null | undefined,
 ): value is null | undefined {
@@ -30,4 +32,25 @@ export function isTruthy<T>(
     value: T | null | undefined | false | "" | 0 | void,
 ): value is T {
     return !!value;
+}
+
+export function isArray<T>(itemValidator: Validator<T>): Validator<T[]> {
+    return (value): value is T[] =>
+        Array.isArray(value) && value.every(itemValidator);
+}
+
+export function isEither<A, B>(
+    validatorA: Validator<A>,
+    validatorB: Validator<B>,
+): Validator<A | B> {
+    return (value: unknown): value is A | B =>
+        validatorA(value) || validatorB(value);
+}
+
+export function isBoth<A, B>(
+    validatorA: Validator<A>,
+    validatorB: Validator<B>,
+): Validator<A | B> {
+    return (value: unknown): value is A & B =>
+        validatorA(value) && validatorB(value);
 }

@@ -5,7 +5,10 @@ export class LRUCache<KeyType, ValueType> {
     private values: Map<KeyType, ValueType> = new Map();
     private nodes: Map<KeyType, LinkedNode<KeyType>> = new Map();
 
-    constructor(private readonly capacity = Infinity, private readonly onDestroy?: (key: KeyType, value: ValueType) => void) { }
+    constructor(
+        private readonly capacity = Infinity,
+        private readonly onDestroy?: (key: KeyType, value: ValueType) => void,
+    ) {}
 
     public set(key: KeyType, value: ValueType) {
         const oldValue = this.nodes.get(key);
@@ -46,7 +49,7 @@ export class LRUCache<KeyType, ValueType> {
         this.nodes.clear();
         this.list.clear();
     }
-    
+
     public size() {
         return this.values.size;
     }

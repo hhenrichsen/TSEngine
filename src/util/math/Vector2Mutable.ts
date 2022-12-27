@@ -3,7 +3,10 @@ import { Hashable } from "../types/Hashable";
 import { Representable } from "../types/Representable";
 import Vector2, { Vector2Like } from "./Vector2";
 
-export class Vector2Mutable extends Vector2 implements Representable, Hashable, Equatable<Vector2Like> {
+export class Vector2Mutable
+    extends Vector2
+    implements Representable, Hashable, Equatable<Vector2Like>
+{
     /**
      * A constant zero vector.
      */
@@ -98,7 +101,8 @@ export class Vector2Mutable extends Vector2 implements Representable, Hashable, 
     }
 
     /**
-     * Subtracts another vector from this vector, scaling the other by a given factor.
+     * Subtracts another vector from this vector, scaling the other by a given
+     * factor.
      *
      * @param other The other vector to subtract.
      * @param scalar The amount to scale the other vector by.

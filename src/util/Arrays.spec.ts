@@ -74,7 +74,7 @@ describe(module.id, () => {
             expect(a3.length).toBe(10);
             expect(a3[0].length).toBe(2);
             expect(a3).toEqual(
-                Arrays.init(10, (i) => [i < 5 ? i * i : undefined, i])
+                Arrays.init(10, (i) => [i < 5 ? i * i : undefined, i]),
             );
         });
     });

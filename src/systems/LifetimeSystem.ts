@@ -1,7 +1,7 @@
-import { BaseSystem } from '../base/BaseSystem';
-import { Entity } from '../base/Entity';
-import { Scene } from '../base/Scene';
-import { Lifetime } from '../components/Lifetime';
+import { BaseSystem } from "../base/BaseSystem";
+import { Entity } from "../base/Entity";
+import { Scene } from "../base/Scene";
+import { Lifetime } from "../components/Lifetime";
 
 export class LifetimeSystem extends BaseSystem<[typeof Lifetime]> {
     constructor(scene: Scene) {

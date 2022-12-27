@@ -1,7 +1,6 @@
 import { Lifetime } from "../components/Lifetime";
 import { Position2D } from "../components/Position2D";
 import { Vector2Mutable } from "../util/math/Vector2Mutable";
-import { Entity } from "./Entity";
 import { Game } from "./Game";
 
 describe(module.id, () => {
@@ -11,11 +10,11 @@ describe(module.id, () => {
         scene.addComponentType(Lifetime);
         scene.finishRegistration();
         const entity = scene.createEntity();
-        return {entity};
+        return { entity };
     };
 
     test("Should have a component", () => {
-        const {entity} = setup();
+        const { entity } = setup();
 
         entity.addComponentLiteral(Lifetime, 0);
         expect(entity.hasComponent(Lifetime)).toBeTruthy();
@@ -23,7 +22,7 @@ describe(module.id, () => {
     });
 
     test("Should not update by creating new components", () => {
-        const {entity} = setup();
+        const { entity } = setup();
 
         entity.addComponentLiteral(Lifetime, 0);
         entity.addComponentLiteral(Lifetime, 100);
@@ -31,7 +30,7 @@ describe(module.id, () => {
     });
 
     test("Should udpate with the update method", () => {
-        const {entity} = setup();
+        const { entity } = setup();
 
         entity.addComponentLiteral(Lifetime, 0);
         entity.updateComponent(Lifetime, 100);
@@ -39,7 +38,7 @@ describe(module.id, () => {
     });
 
     test("Should not update by creating new components", () => {
-        const {entity} = setup();
+        const { entity } = setup();
 
         entity.addComponentLiteral(Lifetime, 100);
         entity.addComponent({ type: Lifetime, data: 0 });
@@ -47,7 +46,7 @@ describe(module.id, () => {
     });
 
     test("Should not be able to get the component", () => {
-        const {entity} = setup();
+        const { entity } = setup();
 
         entity.addComponentLiteral(Lifetime, 100);
         entity.removeComponent(Lifetime);
@@ -55,7 +54,7 @@ describe(module.id, () => {
     });
 
     test("Should be able to add the component again", () => {
-        const {entity} = setup();
+        const { entity } = setup();
 
         entity.addComponentLiteral(Lifetime, 0);
         entity.addComponent({ type: Lifetime, data: 0 });
@@ -63,13 +62,13 @@ describe(module.id, () => {
     });
 
     test("Should not be able to get nonexistent components", () => {
-        const {entity} = setup();
+        const { entity } = setup();
 
         expect(entity.getComponent(Position2D)).toBeFalsy();
     });
 
     test("Should not be able to update nonexistent components", () => {
-        const {entity} = setup();
+        const { entity } = setup();
 
         entity.updateComponent(Position2D, Vector2Mutable.Ones);
         expect(entity.getComponent(Position2D)).toBeFalsy();

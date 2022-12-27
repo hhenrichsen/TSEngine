@@ -13,7 +13,10 @@ export class Arrays {
         return Arrays.init(len, (index) => [a1[index], a2[index]]);
     }
 
-    public static zip<T, U>(a1: T[], a2: U[]): [T | undefined, U | undefined][] {
+    public static zip<T, U>(
+        a1: T[],
+        a2: U[],
+    ): [T | undefined, U | undefined][] {
         const len = Math.max(a1.length, a2.length);
         return Arrays.init(len, (index) => [a1[index], a2[index]]);
     }

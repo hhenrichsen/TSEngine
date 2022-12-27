@@ -21,7 +21,11 @@ export class LinkedList<ItemType> {
 
     public shift(count = 1): ItemType[] {
         const results: ItemType[] = [];
-        for (let i = 0, current = this._head; i < count && current; i++, current = current?.next, this._head = current) {
+        for (
+            let i = 0, current = this._head;
+            i < count && current;
+            i++, current = current?.next, this._head = current
+        ) {
             results.push(current.data);
             this._length--;
             if (current.next) {
@@ -33,7 +37,11 @@ export class LinkedList<ItemType> {
 
     public pop(count = 1): ItemType[] {
         const results: ItemType[] = [];
-        for (let i = 0, current = this._tail; i < count && current; i++, current = current?.previous, this._tail = current) {
+        for (
+            let i = 0, current = this._tail;
+            i < count && current;
+            i++, current = current?.previous, this._tail = current
+        ) {
             results.push(current.data);
             this._length--;
             if (current.previous) {
@@ -46,24 +54,35 @@ export class LinkedList<ItemType> {
     }
 
     public forEach(fn: (item: ItemType, index: number) => void) {
-        for(let i = 0, curr = this._head; curr != undefined; curr = curr.next, i++) {
+        for (
+            let i = 0, curr = this._head;
+            curr != undefined;
+            curr = curr.next, i++
+        ) {
             fn(curr.data, i);
         }
     }
 
-    public map<MappedType>(fn: (item: ItemType, index: number) => MappedType): LinkedList<MappedType> {
+    public map<MappedType>(
+        fn: (item: ItemType, index: number) => MappedType,
+    ): LinkedList<MappedType> {
         const res = new LinkedList<MappedType>();
-        for(let i = 0, curr = this._head; curr != undefined; curr = curr.next, i++) {
+        for (
+            let i = 0, curr = this._head;
+            curr != undefined;
+            curr = curr.next, i++
+        ) {
             res.push(fn(curr.data, i));
         }
         return res;
     }
 
     /**
-     * Finds the first instance of a given value and moves it to the top of the list.
+     * Finds the first instance of a given value and moves it to the top of the
+     * list.
      */
     public top(value: ItemType, eq: (a: ItemType, b: ItemType) => boolean) {
-        for(let curr = this._head; curr != undefined; curr = curr.next) {
+        for (let curr = this._head; curr != undefined; curr = curr.next) {
             if (eq(curr.data, value)) {
                 this.bringNodeToTop(curr);
             }
@@ -71,10 +90,11 @@ export class LinkedList<ItemType> {
     }
 
     /**
-     * Finds the first instance of a given value and moves it to the bottom of the list.
+     * Finds the first instance of a given value and moves it to the bottom of
+     * the list.
      */
     public bottom(value: ItemType, eq: (a: ItemType, b: ItemType) => boolean) {
-        for(let curr = this._head; curr != undefined; curr = curr.next) {
+        for (let curr = this._head; curr != undefined; curr = curr.next) {
             if (eq(curr.data, value)) {
                 this.sendNodeToBottom(curr);
             }
@@ -159,19 +179,23 @@ export class LinkedList<ItemType> {
             next: () => {
                 const res = {
                     value: current?.data,
-                    done: current == undefined
-                }; 
+                    done: current == undefined,
+                };
                 current = current?.next;
                 return res;
-            }
+            },
         };
     }
 
     public get length() {
-        return this._length
+        return this._length;
     }
 }
 
 export class LinkedNode<T> {
-    constructor(public data: T, public previous?: LinkedNode<T>, public next?: LinkedNode<T>) { }
+    constructor(
+        public data: T,
+        public previous?: LinkedNode<T>,
+        public next?: LinkedNode<T>,
+    ) {}
 }

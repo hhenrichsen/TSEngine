@@ -4,12 +4,13 @@ import { Lifetime } from "./components/Lifetime";
 import { Position2D } from "./components/Position2D";
 import { Velocity2D } from "./components/Velocity2D";
 import { LifetimeSystem } from "./systems/LifetimeSystem";
-import { VelocitySystem } from "./systems/VelocitySystem";
+import { VelocitySystem2D } from "./systems/VelocitySystem2D";
 import { Arrays } from "./util/Arrays";
 import { LinkedList } from "./util/data/LinkedList";
 import { LRUCache } from "./util/data/LRUCache";
 import { Maps } from "./util/Maps";
 import { Sets } from "./util/Sets";
+import * as PrimitiveTypeGuards from "./util/PrimitiveTypeguards";
 
 export const DefaultComponents = {
     Position2D,
@@ -18,7 +19,7 @@ export const DefaultComponents = {
 };
 
 export const DefaultSystems = {
-    VelocitySystem,
+    VelocitySystem2D,
     LifetimeSystem,
 };
 
@@ -28,4 +29,5 @@ export const Util = {
     Arrays,
     Sets,
     Maps,
+    PrimitiveTypeGuards,
 };

@@ -1,11 +1,14 @@
-import {FirstArgument} from "../util/types/Functions";
-import {ComponentType} from "./Component";
-import {Game} from "../base/Game";
-import {Entity} from "./Entity";
+import { FirstArgument } from "../util/types/Functions";
+import { ComponentType } from "./Component";
+import { Entity } from "./Entity";
 import { Scene } from "../base/Scene";
-import { ComponentCreated, ComponentCreatedEvent, ComponentRemoved, ComponentRemovedEvent } from "./ComponentStore";
+import {
+    ComponentCreated,
+    ComponentCreatedEvent,
+    ComponentRemoved,
+    ComponentRemovedEvent,
+} from "./ComponentStore";
 import { GameEvent } from "../event/EventTarget";
-import { SimpleGameEvent } from "../event/Event";
 
 export interface IntervalStorage {
     rate: number;
@@ -25,7 +28,7 @@ export abstract class BaseSystem<
         protected readonly scene: Scene,
         protected readonly required: Required,
         protected readonly excluded: Excluded,
-        protected readonly doEntityUpdate = true
+        protected readonly doEntityUpdate = true,
     ) {
         this.scene.listen(ComponentCreated, this.notifyCreated.bind(this));
         this.scene.listen(ComponentRemoved, this.notifyRemoved.bind(this));
@@ -49,7 +52,7 @@ export abstract class BaseSystem<
 
     /**
      * Runs system update functions.
-     * 
+     *
      * @param elapsedTimeMs The amount of time since the last update.
      */
     public update(elapsedTimeMs: number): void {
@@ -79,7 +82,8 @@ export abstract class BaseSystem<
     }
 
     /**
-     * Intended to be overridden. Called for each tracked entity if entity updating is enabled.
+     * Intended to be overridden. Called for each tracked entity if entity
+     * updating is enabled.
      */
     protected entityUpdate(_elapsedTimeMs: number, _entity: Entity): void {
         return;
@@ -94,28 +98,41 @@ export abstract class BaseSystem<
 
     /**
      * Checks if a given entity should be tracked.
-     * 
+     *
      * @param componentType The component type being added to the entity
      * @param entity The entity being added to
      * @returns Whether the entity should be tracked
      */
-    protected shouldTrack(componentType: ComponentType, entity: Entity): boolean {
-        if (this.checkAllRequiredComponents(componentType, entity) && this.checkNoExcludedComponents(componentType, entity)) {
+    protected shouldTrack(
+        componentType: ComponentType,
+        entity: Entity,
+    ): boolean {
+        if (
+            this.checkAllRequiredComponents(componentType, entity) &&
+            this.checkNoExcludedComponents(componentType, entity)
+        ) {
             return true;
         }
         return false;
     }
 
     /**
-     * Checks if an entity has all required components to be tracked by this system.
-     * 
+     * Checks if an entity has all required components to be tracked by this
+     * system.
+     *
      * @param componentType The component type being added to the entity
      * @param entity The entity being checked
      * @returns If all required components are or will be present on the entity
      */
-    protected checkAllRequiredComponents(componentType: ComponentType, entity: Entity): boolean {
+    protected checkAllRequiredComponents(
+        componentType: ComponentType,
+        entity: Entity,
+    ): boolean {
         for (const requirement of this.required) {
-            if (!entity.hasComponent(requirement) && componentType != requirement) {
+            if (
+                !entity.hasComponent(requirement) &&
+                componentType != requirement
+            ) {
                 return false;
             }
         }
@@ -124,12 +141,15 @@ export abstract class BaseSystem<
 
     /**
      * Checks if a given entity should no longer be tracked.
-     * 
+     *
      * @param componentType The component being removed from the entity
      * @param _entity The entity being removed from; ignored by default
      * @returns Whether the entity should be removed
      */
-    protected shouldRemove<T>(componentType: ComponentType<string, T>, _entity: Entity) {
+    protected shouldRemove<T>(
+        componentType: ComponentType<string, T>,
+        _entity: Entity,
+    ) {
         if (this.requiredIds.has(componentType.key)) {
             return true;
         }
@@ -138,12 +158,15 @@ export abstract class BaseSystem<
 
     /**
      * Checks if a given entity has any excluded components.
-     * 
+     *
      * @param componentType The component being added to the entity
      * @param entity The entity being added to
      * @returns Whether the entity is free of excluded components
      */
-    protected checkNoExcludedComponents(componentType: ComponentType, entity: Entity): boolean {
+    protected checkNoExcludedComponents(
+        componentType: ComponentType,
+        entity: Entity,
+    ): boolean {
         for (const exclusion of this.excluded) {
             if (entity.hasComponent(exclusion) || componentType == exclusion) {
                 return false;
@@ -153,15 +176,16 @@ export abstract class BaseSystem<
     }
 
     /**
-     * Pulls required components from an entity. Throws an exception if a required component is not present.
-     * 
+     * Pulls required components from an entity. Throws an exception if a
+     * required component is not present.
+     *
      * @param entity The entity to pull components from
      * @returns A map of the components with ComponentType.key => component data
      */
     protected getComponents(entity: Entity): {
         [R in Required[number]["key"]]: FirstArgument<Required[number]["new"]>;
     } {
-        const res: {[key: string]: any} = {};
+        const res: { [key: string]: any } = {};
         this.required.forEach(
             (type) => (res[type.key] = this.getComponentOrThrow(entity, type)),
         );
@@ -169,13 +193,16 @@ export abstract class BaseSystem<
         // above happens, but I don't know how to make TypeScript see it that
         // way other than a cast.
         return res as {
-            [R in Required[number]["key"]]: FirstArgument<Required[number]["new"]>;
+            [R in Required[number]["key"]]: FirstArgument<
+                Required[number]["new"]
+            >;
         };
     }
 
     /**
-     * Gets a component from an entity if it exists; throws an error if it does not.
-     * 
+     * Gets a component from an entity if it exists; throws an error if it
+     * does not.
+     *
      * @param entity The entity to pull the component from
      * @param componentType The component to pull
      * @returns The component data
@@ -198,9 +225,7 @@ export abstract class BaseSystem<
         return component;
     }
 
-    private notifyCreated<T>(
-        event: GameEvent<ComponentCreatedEvent<T>>
-    ): void {
+    private notifyCreated<T>(event: GameEvent<ComponentCreatedEvent<T>>): void {
         const entity = this.scene.getEntity(event.data.id);
         if (entity) {
             this.shouldTrack(event.data.type, entity)
@@ -209,12 +234,11 @@ export abstract class BaseSystem<
         }
     }
 
-    private notifyRemoved<T>(
-        event: GameEvent<ComponentRemovedEvent<T>>
-    ): void {
+    private notifyRemoved<T>(event: GameEvent<ComponentRemovedEvent<T>>): void {
         const entity = this.scene.getEntity(event.data.id);
         if (entity) {
-            this.shouldRemove(event.data.type, entity) && this.entities.delete(entity.id);
+            this.shouldRemove(event.data.type, entity) &&
+                this.entities.delete(entity.id);
         }
     }
 

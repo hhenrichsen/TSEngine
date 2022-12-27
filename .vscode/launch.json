@@ -20,7 +20,7 @@
                 "webpack:///./~/*": "${webRoot}/node_modules/*",
                 "webpack:///./*": "${webRoot}/*",
                 "webpack:///*": "*",
-                "webpack:///src/*": "${webRoot}/*",
+                "webpack:///src/*": "${webRoot}/*"
             }
         }
     ]

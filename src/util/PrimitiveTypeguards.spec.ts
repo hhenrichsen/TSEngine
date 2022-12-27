@@ -21,12 +21,9 @@ describe(module.id, () => {
             { name: "false", value: false, expected: false },
             { name: "0", value: 0, expected: false },
             { name: "hello world", value: "hello world", expected: true },
-        ])(
-            "IsString($name): Should be $expected",
-            ({ name, value, expected }) => {
-                expect(isString(value)).toBe(expected);
-            }
-        );
+        ])("IsString($name): Should be $expected", ({ value, expected }) => {
+            expect(isString(value)).toBe(expected);
+        });
     });
 
     describe("isNumber", () => {
@@ -42,12 +39,9 @@ describe(module.id, () => {
             { name: "false", value: false, expected: false },
             { name: "0", value: 0, expected: true },
             { name: "hello world", value: "hello world", expected: false },
-        ])(
-            "IsNumber($name): Should be $expected",
-            ({ name, value, expected }) => {
-                expect(isNumber(value)).toBe(expected);
-            }
-        );
+        ])("IsNumber($name): Should be $expected", ({ value, expected }) => {
+            expect(isNumber(value)).toBe(expected);
+        });
     });
     describe("isInt", () => {
         test.each([
@@ -62,7 +56,7 @@ describe(module.id, () => {
             { name: "false", value: false, expected: false },
             { name: "0", value: 0, expected: true },
             { name: "hello world", value: "hello world", expected: false },
-        ])("IsInt($name): Should be $expected", ({ name, value, expected }) => {
+        ])("IsInt($name): Should be $expected", ({ value, expected }) => {
             expect(isInt(value)).toBe(expected);
         });
     });
@@ -79,12 +73,9 @@ describe(module.id, () => {
             { name: "false", value: false, expected: true },
             { name: "0", value: 0, expected: false },
             { name: "hello world", value: "hello world", expected: false },
-        ])(
-            "IsBoolean($name): Should be $expected",
-            ({ name, value, expected }) => {
-                expect(isBoolean(value)).toBe(expected);
-            }
-        );
+        ])("IsBoolean($name): Should be $expected", ({ value, expected }) => {
+            expect(isBoolean(value)).toBe(expected);
+        });
     });
     describe("IsNotNullOrUndefined", () => {
         test.each([
@@ -101,9 +92,9 @@ describe(module.id, () => {
             { name: "hello world", value: "hello world", expected: true },
         ])(
             "IsNotNullOrUndefined($name): Should be $expected",
-            ({ name, value, expected }) => {
+            ({ value, expected }) => {
                 expect(isNotNullOrUndefined(value)).toBe(expected);
-            }
+            },
         );
     });
 
@@ -120,11 +111,8 @@ describe(module.id, () => {
             { name: "false", value: false, expected: false },
             { name: "0", value: 0, expected: false },
             { name: "hello world", value: "hello world", expected: true },
-        ])(
-            "isTruthy($name): Should be $expected",
-            ({ name, value, expected }) => {
-                expect(isTruthy(value)).toBe(expected);
-            }
-        );
+        ])("isTruthy($name): Should be $expected", ({ value, expected }) => {
+            expect(isTruthy(value)).toBe(expected);
+        });
     });
 });

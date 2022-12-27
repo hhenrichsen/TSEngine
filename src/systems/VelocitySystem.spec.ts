@@ -1,7 +1,7 @@
 import { Position2D } from "../components/Position2D";
 import { Velocity2D } from "../components/Velocity2D";
 import { createTestScene } from "../testutils/SceneMock";
-import { Vector2Like } from '../util/math/Vector2';
+import { Vector2Like } from "../util/math/Vector2";
 import { Vector2Mutable } from "../util/math/Vector2Mutable";
 import { VelocitySystem2D } from "./VelocitySystem2D";
 
@@ -9,7 +9,7 @@ export function expectVector2CloseTo(
     vector: Vector2Like | undefined,
     x: number,
     y: number,
-    threshold = 0.0001
+    threshold = 0.0001,
 ) {
     expect(vector).toBeTruthy();
     if (!vector) {

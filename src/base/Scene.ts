@@ -20,12 +20,17 @@ export class Scene extends GameEventTarget {
 
     public readonly componentStore: ComponentStore;
 
-    constructor(private readonly initialPoolSize: number = 2000, private readonly allowAdditionalEntities: boolean = true, globalStore?: ComponentStore, parentEventTarget?: GameEventTarget) {
+    constructor(
+        private readonly initialPoolSize: number = 2000,
+        private readonly allowAdditionalEntities: boolean = true,
+        globalStore?: ComponentStore,
+        parentEventTarget?: GameEventTarget,
+    ) {
         super(parentEventTarget);
         this.componentStore = new ComponentStore(
             this.initialPoolSize,
             globalStore,
-            this
+            this,
         );
         for (let i = 0; i < this.initialPoolSize; i++) {
             this.entityIds.push(i);
@@ -87,7 +92,9 @@ export class Scene extends GameEventTarget {
     public createEntity(): Entity {
         const id = this.entityIds.pop();
         if (!id && !this.allowAdditionalEntities) {
-            throw new Error(`Trying to create additional entities in a scene that does not allow more than ${this.initialPoolSize} entities`);
+            throw new Error(
+                `Trying to create additional entities in a scene that does not allow more than ${this.initialPoolSize} entities`,
+            );
         }
         const newId = id ?? this.entities.size;
         if (id == undefined) {
