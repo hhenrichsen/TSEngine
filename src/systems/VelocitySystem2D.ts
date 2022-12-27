@@ -4,7 +4,7 @@ import { Scene } from "../base/Scene";
 import {Position2D} from "../components/Position2D";
 import {Velocity2D} from "../components/Velocity2D";
 
-export class VelocitySystem extends BaseSystem<
+export class VelocitySystem2D extends BaseSystem<
     [typeof Velocity2D, typeof Position2D]
 > {
     constructor(scene: Scene) {
