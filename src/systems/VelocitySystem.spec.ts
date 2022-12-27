@@ -12,6 +12,9 @@ export function expectVector2CloseTo(
     threshold = 0.0001
 ) {
     expect(vector).toBeTruthy();
+    if (!vector) {
+        throw new Error("Invalid state; got a falsy vector");
+    }
     expect(vector.x).toBeCloseTo(x, threshold);
     expect(vector.y).toBeCloseTo(y, threshold);
 }
