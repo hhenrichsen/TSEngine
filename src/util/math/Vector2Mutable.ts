@@ -1,17 +1,20 @@
-import Vector2 from "./Vector2";
+import { Equatable } from "../types/Equatable";
+import { Hashable } from "../types/Hashable";
+import { Representable } from "../types/Representable";
+import Vector2, { Vector2Like } from "./Vector2";
 
-export class Vector2Mutable extends Vector2 {
+export class Vector2Mutable extends Vector2 implements Representable, Hashable, Equatable<Vector2Like> {
     /**
      * A constant zero vector.
      */
-    static override get ZERO() {
+    static override get Zero() {
         return new Vector2Mutable(0, 0);
     }
 
     /**
      * A constant one vector.
      */
-    static override get ONES() {
+    static override get Ones() {
         return new Vector2Mutable(1, 1);
     }
 
@@ -31,45 +34,45 @@ export class Vector2Mutable extends Vector2 {
         return this._y;
     }
 
-    override normalize(): Vector2 {
-        const magnitude = this.magnitude();
+    normalize(): Vector2Mutable {
+        const magnitude = Vector2.magnitude(this);
         if (magnitude == 0) return this;
         this._x /= magnitude;
         this._y /= magnitude;
         return this;
     }
 
-    override piecewiseScale(scalar: Vector2): Vector2 {
+    piecewiseScale(scalar: Vector2Like): Vector2Mutable {
         this._x *= scalar.x;
         this._y *= scalar.y;
         return this;
     }
 
-    override scale(scalar: number): Vector2 {
+    scale(scalar: number): Vector2Mutable {
         this._x *= scalar;
         this._y *= scalar;
         return this;
     }
 
-    override add(other: Vector2): Vector2 {
+    add(other: Vector2): Vector2Mutable {
         this._x += other.x;
         this._y += other.y;
         return this;
     }
 
-    override addConstant(x: number, y: number): Vector2 {
+    addConstant(x: number, y: number): Vector2Mutable {
         this._x += x;
         this._y += y;
         return this;
     }
 
-    override floor(): Vector2 {
+    floor(): Vector2Mutable {
         this._x = Math.floor(this._x);
         this._y = Math.floor(this._y);
         return this;
     }
 
-    override ceil(): Vector2 {
+    ceil(): Vector2Mutable {
         this._x = Math.floor(this._x);
         this._y = Math.floor(this._y);
         return this;
@@ -82,13 +85,13 @@ export class Vector2Mutable extends Vector2 {
      * @param scalar The amount to scale the other vector by.
      * @returns The resulting vector of this + other * scalar.
      */
-    override addScaled(other: Vector2, scalar: number): Vector2 {
+    addScaled(other: Vector2Like, scalar: number): Vector2Mutable {
         this._x += other.x * scalar;
         this._y += other.y * scalar;
         return this;
     }
 
-    override subtract(other: Vector2): Vector2 {
+    subtract(other: Vector2): Vector2Mutable {
         this._x -= other.x;
         this._y -= other.y;
         return this;
@@ -101,18 +104,18 @@ export class Vector2Mutable extends Vector2 {
      * @param scalar The amount to scale the other vector by.
      * @returns The resulting vector of this - other * scalar.
      */
-    override subtractScaled(other: Vector2, scalar: number): Vector2 {
+    subtractScaled(other: Vector2Like, scalar: number): Vector2Mutable {
         this._x -= other.x * scalar;
         this._y -= other.y * scalar;
         return this;
     }
 
-    override rotateDegrees(degrees: number): Vector2 {
+    rotateDegrees(degrees: number): Vector2Mutable {
         const radians = (degrees * Math.PI) / 180;
         return this.rotateRadians(radians);
     }
 
-    override rotateRadians(radians: number): Vector2 {
+    rotateRadians(radians: number): Vector2Mutable {
         this._x = this._x * Math.cos(radians) - Math.sin(radians) * this._y;
         this._y = this._x * Math.sin(radians) + this._y * Math.cos(radians);
         return this;

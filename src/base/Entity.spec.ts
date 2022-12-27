@@ -71,7 +71,7 @@ describe(module.id, () => {
     test("Should not be able to update nonexistent components", () => {
         const {entity} = setup();
 
-        entity.updateComponent(Position2D, Vector2Mutable.ONES);
+        entity.updateComponent(Position2D, Vector2Mutable.Ones);
         expect(entity.getComponent(Position2D)).toBeFalsy();
     });
 });
