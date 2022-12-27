@@ -65,7 +65,7 @@ export class LinkedList<ItemType> {
     public top(value: ItemType, eq: (a: ItemType, b: ItemType) => boolean) {
         for(let curr = this._head; curr != undefined; curr = curr.next) {
             if (eq(curr.data, value)) {
-                this.topNode(curr);
+                this.bringNodeToTop(curr);
             }
         }
     }
@@ -76,7 +76,7 @@ export class LinkedList<ItemType> {
     public bottom(value: ItemType, eq: (a: ItemType, b: ItemType) => boolean) {
         for(let curr = this._head; curr != undefined; curr = curr.next) {
             if (eq(curr.data, value)) {
-                this.bottomNode(curr);
+                this.sendNodeToBottom(curr);
             }
         }
     }
@@ -135,12 +135,12 @@ export class LinkedList<ItemType> {
         this._length--;
     }
 
-    public topNode(node: LinkedNode<ItemType>) {
+    public bringNodeToTop(node: LinkedNode<ItemType>) {
         this.removeNode(node);
         return this.insertFront(node.data);
     }
 
-    public bottomNode(node: LinkedNode<ItemType>) {
+    public sendNodeToBottom(node: LinkedNode<ItemType>) {
         this.removeNode(node);
         return this.insertBack(node.data);
     }

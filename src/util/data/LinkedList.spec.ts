@@ -68,12 +68,12 @@ describe(module.id, () => {
             const n3 = ll.insertBack(2);
             const n4 = ll.insertBack(3);
 
-            ll.topNode(n4);
+            ll.bringNodeToTop(n4);
             expect(ll.length).toBe(4);
             expect([...ll].length).toBe(4);
             expect([...ll]).toEqual([3, 0, 1, 2]);
 
-            ll.bottomNode(n1);
+            ll.sendNodeToBottom(n1);
             expect(ll.length).toBe(4);
             expect([...ll].length).toBe(4);
             expect([...ll]).toEqual([3, 1, 2, 0]);

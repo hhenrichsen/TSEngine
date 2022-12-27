@@ -34,7 +34,7 @@ export class LRUCache<KeyType, ValueType> {
     public get(key: KeyType): ValueType | undefined {
         const node = this.nodes.get(key);
         if (node) {
-            const newNode = this.list.topNode(node);
+            const newNode = this.list.bringNodeToTop(node);
             this.nodes.set(key, newNode);
             return this.values.get(key);
         }
