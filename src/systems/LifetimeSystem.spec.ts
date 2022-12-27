@@ -1,9 +1,9 @@
-import { createTestScene } from "../base/Game.test";
-import {Lifetime} from "../components/Lifetime";
-import {LifetimeSystem} from "./LifetimeSystem";
+import { Lifetime } from "../components/Lifetime";
+import { createTestScene } from "../testutils/SceneMock";
+import { LifetimeSystem } from "./LifetimeSystem";
 
 describe(module.id, () => {
-    it("should remove entities with lifetimes below 0", () => {
+    test("should remove entities with lifetimes below 0", () => {
         const { game, scene } = createTestScene([Lifetime]);
 
         scene.addSystem(LifetimeSystem);
@@ -14,7 +14,7 @@ describe(module.id, () => {
         expect(scene.getEntity(ent1.id)).toBeFalsy();
     });
 
-    it("should leave other entities alone", () => {
+    test("should leave other entities alone", () => {
         const { game, scene } = createTestScene([Lifetime]);
 
         scene.addSystem(LifetimeSystem);

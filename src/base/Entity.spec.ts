@@ -1,52 +1,62 @@
 import { Lifetime } from "../components/Lifetime";
 import { Position2D } from "../components/Position2D";
 import { Vector2Mutable } from "../util/math/Vector2Mutable";
+import { Entity } from "./Entity";
 import { Game } from "./Game";
 
 describe(module.id, () => {
-    const setup = () => {
+    let entity: Entity;
+
+    beforeEach(() => {
         const game = new Game();
         const scene = game.createScene("test");
         scene.addComponentType(Lifetime);
         scene.finishRegistration();
-        return { scene };
-    };
+        entity = scene.createEntity();
+    });
 
-    it("should be able to add and remove single components", () => {
-        const { scene } = setup();
-        const entity = scene.createEntity();
-        expect(entity).toBeTruthy();
-
+    test("Should have a component", () => {
         entity.addComponentLiteral(Lifetime, 0);
-        expect(entity.hasComponent(Lifetime)).withContext("Should have a component").toBeTrue();
-        expect(entity.getComponent(Lifetime)).withContext("Should have set to the given value").toBe(0);
+        expect(entity.hasComponent(Lifetime)).toBeTruthy();
+        expect(entity.getComponent(Lifetime)).toBe(0);
+    });
 
+    test("Should not update by creating new components", () => {
+        entity.addComponentLiteral(Lifetime, 0);
         entity.addComponentLiteral(Lifetime, 100);
-        expect(entity.getComponent(Lifetime)).withContext("Should not update by creating new components").toBe(0);
+        expect(entity.getComponent(Lifetime)).toBe(0);
+    });
 
+    test("Should udpate with the update method", () => {
+        entity.addComponentLiteral(Lifetime, 0);
         entity.updateComponent(Lifetime, 100);
-        expect(entity.getComponent(Lifetime)).withContext("Should update with the update method").toBe(100);
+        expect(entity.getComponent(Lifetime)).toBe(100);
+    });
 
+    test("Should not update by creating new components", () => {
+        entity.addComponentLiteral(Lifetime, 100);
         entity.addComponent({ type: Lifetime, data: 0 });
-        expect(entity.getComponent(Lifetime)).withContext("Should not update by creating new components").toBe(100);
+        expect(entity.getComponent(Lifetime)).toBe(100);
+    });
 
+    test("Should not be able to get the component", () => {
+        entity.addComponentLiteral(Lifetime, 100);
         entity.removeComponent(Lifetime);
-        expect(entity.getComponent(Lifetime)).withContext("Should no longer be able to get the component").toBeFalsy();
-        expect(entity.hasComponent(Lifetime)).withContext("Should no longer be able to get the component").toBeFalsy();
+        expect(entity.getComponent(Lifetime)).toBeFalsy();
+    });
 
+    test("Should be able to add the component again", () => {
+        entity.addComponentLiteral(Lifetime, 0);
         entity.addComponent({ type: Lifetime, data: 0 });
-        expect(entity.getComponent(Lifetime)).withContext("Should be able to add the component again").toBe(0);
+        expect(entity.getComponent(Lifetime)).toBe(0);
+    });
 
-        expect(entity.getComponent(Position2D)).withContext("Should not be able to get nonexistent components").toBeFalsy();
+    test("Should not be able to get nonexistent components", () => {
+        expect(entity.getComponent(Position2D)).toBeFalsy();
+    });
 
+    test("Should not be able to update nonexistent components", () => {
         entity.updateComponent(Position2D, Vector2Mutable.ONES);
-        expect(entity.getComponent(Position2D)).withContext("Should not be able to update nonexistent components").toBeFalsy();
-
-        entity.removeComponent(Position2D);
-
-        const unsafeEntity = (entity as any);
-        unsafeEntity.components.set("invalid", 15);
-
-        entity.clear();
+        expect(entity.getComponent(Position2D)).toBeFalsy();
     });
 });
