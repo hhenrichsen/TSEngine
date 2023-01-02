@@ -1,28 +1,84 @@
+import { Numbers } from "../Numbers";
 import { isNumber } from "../PrimitiveTypeguards";
 import { Equatable } from "../types/Equatable";
-import { Hashable, Hasher } from "../types/Hashable";
-import { Representable, Representer } from "../types/Representable";
+import { Hashable } from "../types/Hashable";
+import { Representable } from "../types/Representable";
+import { objectValidator } from "../Validators";
 
 export interface Vector2Like {
     x: number;
     y: number;
 }
 
+export interface Vector2Operatable<T extends Vector2Like> extends Vector2Like {
+    normalize(): T;
+
+    squareMagnitude(): number;
+    magnitude(): number;
+    determinant(other: Vector2Like): number;
+
+    distance(other: Vector2Like): number;
+    squareDistance(other: Vector2Like): number;
+
+    scale(constant: number): T;
+    scale(x: number, y: number): T;
+    scale(vector: Vector2Like): T;
+
+    add(constant: number): T;
+    add(x: number, y: number): T;
+    add(vector: Vector2Like): T;
+    addScaled(other: Vector2Like, scalar: number): T;
+
+    subtract(constant: number): T;
+    subtract(x: number, y: number): T;
+    subtract(vector: Vector2Like): T;
+    subtractScaled(other: Vector2Like, scalar: number): T;
+
+    floor(): T;
+    ceil(): T;
+
+    rotateDegrees(degrees: number): T;
+    rotateRadians(radians: number): T;
+    toAngleRadians(): number;
+    toAngleDegrees(): number;
+
+    isNear(other: Vector2Like, threshold?: number): boolean;
+
+    equals(other: unknown): boolean;
+    toString(): string;
+    hashCode(): number;
+
+    [Symbol.iterator]();
+}
+
 /**
  * Immutable Vector2 class.
  */
 export class Vector2
-    implements Vector2Like, Hashable, Representable, Equatable<Vector2Like>
+    implements
+        Vector2Like,
+        Vector2Operatable<Vector2>,
+        Hashable,
+        Representable,
+        Equatable<Vector2Like>
 {
+    public static isVectorLike = objectValidator({
+        x: isNumber,
+        y: isNumber,
+    });
+
     /**
      * A constant zero vector.
      */
-    static Zero: Vector2 = new Vector2(0, 0);
+    public static Zero: Vector2 = new Vector2(0, 0);
 
+    public static UnitX: Vector2 = new Vector2(1, 0);
+
+    public static UnitY: Vector2 = new Vector2(0, 1);
     /**
      * A constant one vector.
      */
-    static Ones: Vector2 = new Vector2(1, 1);
+    public static Ones: Vector2 = new Vector2(1, 1);
 
     protected _x = 0;
     protected _y = 0;
@@ -78,10 +134,10 @@ export class Vector2
      * @param angle The angle to create the vector from, in degrees.
      * @returns A unit vector pointing towards the given angle.
      */
-    static fromAngle(angle: number, scalar?: number): Vector2 {
+    static fromAngleDegrees(angle: number, scalar?: number): Vector2 {
         return new Vector2(
-            Math.cos(angle * (Math.PI / 180)) * (scalar || 1),
-            Math.sin(angle * (Math.PI / 180)) * (scalar || 1),
+            Math.cos(Numbers.degreesToRadians(angle)) * (scalar || 1),
+            Math.sin(Numbers.degreesToRadians(angle)) * (scalar || 1),
         );
     }
 
@@ -129,14 +185,6 @@ export class Vector2
         return Math.pow(pos1.x - pos2.x, 2) + Math.pow(pos1.y - pos2.y, 2);
     }
 
-    get x(): number {
-        return this._x;
-    }
-
-    get y(): number {
-        return this._y;
-    }
-
     public static squareMagnitude(target: Vector2Like): number {
         return Math.pow(target.x, 2) + Math.pow(target.y, 2);
     }
@@ -153,14 +201,18 @@ export class Vector2
         return new Vector2(target.x / magnitude, target.y / magnitude);
     }
 
+    public static scale(target: Vector2Like, constant: number): Vector2;
+    public static scale(target: Vector2Like, x: number, y: number): Vector2;
+    public static scale(target: Vector2Like, vector: Vector2Like): Vector2;
     public static scale(
         target: Vector2Like,
-        scalar: number | Vector2Like,
+        value: number | Vector2Like,
+        other?: number,
     ): Vector2 {
-        if (isNumber(scalar)) {
-            return new Vector2(target.x * scalar, target.y * scalar);
+        if (!isNumber(value)) {
+            return new Vector2(target.x * value.x, target.y * value.y);
         }
-        return new Vector2(target.x * scalar.x, target.y * scalar.y);
+        return new Vector2(target.x * value, target.y * (other ?? value));
     }
 
     public static add(target: Vector2Like, constant: number): Vector2;
@@ -174,15 +226,7 @@ export class Vector2
         if (!isNumber(value)) {
             return new Vector2(target.x + value.x, target.y + value.y);
         }
-        return new Vector2(target.x + value, target.y + other ?? value);
-    }
-
-    public static floor(target: Vector2Like): Vector2 {
-        return new Vector2(Math.floor(target.x), Math.floor(target.y));
-    }
-
-    public static ceil(target: Vector2Like): Vector2 {
-        return new Vector2(Math.ceil(target.x), Math.ceil(target.y));
+        return new Vector2(target.x + value, target.y + (other ?? value));
     }
 
     /**
@@ -203,8 +247,18 @@ export class Vector2
         );
     }
 
-    public static subtract(target: Vector2Like, other: Vector2Like): Vector2 {
-        return new Vector2(target.x - other.x, target.y - other.y);
+    public static subtract(target: Vector2Like, constant: number): Vector2;
+    public static subtract(target: Vector2Like, x: number, y: number): Vector2;
+    public static subtract(target: Vector2Like, vector: Vector2Like): Vector2;
+    public static subtract(
+        target: Vector2Like,
+        value: Vector2Like | number,
+        other?: number,
+    ): Vector2 {
+        if (!isNumber(value)) {
+            return new Vector2(target.x - value.x, target.y - value.y);
+        }
+        return new Vector2(target.x - value, target.y - (other ?? value));
     }
 
     /**
@@ -224,6 +278,14 @@ export class Vector2
             target.x - other.x * scalar,
             target.y - other.y * scalar,
         );
+    }
+
+    public static floor(target: Vector2Like): Vector2 {
+        return new Vector2(Math.floor(target.x), Math.floor(target.y));
+    }
+
+    public static ceil(target: Vector2Like): Vector2 {
+        return new Vector2(Math.ceil(target.x), Math.ceil(target.y));
     }
 
     public static rotateDegrees(target: Vector2Like, degrees: number): Vector2 {
@@ -259,19 +321,13 @@ export class Vector2
         other: unknown,
         threshold = 0,
     ): boolean {
-        return (
-            other !== undefined &&
-            typeof other === "object" &&
-            // TODO(hhenrichsen): Fix with validators
-            Object.prototype.hasOwnProperty.call(other, "_x") &&
-            Object.prototype.hasOwnProperty.call(other, "_y") &&
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore We literally test for it above
-            Math.abs(other.x - target.x) <= threshold &&
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore We literally test for it above
-            Math.abs(other.y - target.y) <= threshold
-        );
+        if (Vector2.isVectorLike(other)) {
+            return (
+                Math.abs(other.x - target.x) <= threshold &&
+                Math.abs(other.y - target.y) <= threshold
+            );
+        }
+        return false;
     }
 
     public static hashCode(target: Vector2Like): number {
@@ -284,23 +340,118 @@ export class Vector2
         threshold = 0.0001,
     ): boolean {
         return (
-            Math.abs(target.x - other.x) < threshold &&
-            Math.abs(target.y - other.y) < threshold
+            Math.abs(target.x - other.x) <= threshold &&
+            Math.abs(target.y - other.y) <= threshold
         );
     }
 
+    public distance(other: Vector2Like): number {
+        return Vector2.distance(this, other);
+    }
+
+    squareDistance(other: Vector2Like): number {
+        return Vector2.squareDistance(this, other);
+    }
+
+    public squareMagnitude(): number {
+        return Vector2.squareMagnitude(this);
+    }
+
+    public magnitude(): number {
+        return Vector2.magnitude(this);
+    }
+
+    public normalize(): Vector2 {
+        return Vector2.normalize(this);
+    }
+
+    public scale(constant: number): Vector2;
+    public scale(x: number, y: number): Vector2;
+    public scale(vector: Vector2Like): Vector2;
+    public scale(value: number | Vector2Like, other?: number): Vector2 {
+        if (!isNumber(value)) {
+            return Vector2.scale(this, value);
+        }
+        return Vector2.scale(this, value, other);
+    }
+
+    public add(constant: number): Vector2;
+    public add(x: number, y: number): Vector2;
+    public add(vector: Vector2Like): Vector2;
+    public add(value: number | Vector2Like, other?: number): Vector2 {
+        if (!isNumber(value)) {
+            return Vector2.add(this, value);
+        }
+        return Vector2.add(this, value, other);
+    }
+
+    public floor(): Vector2 {
+        return Vector2.floor(this);
+    }
+
+    public ceil(): Vector2 {
+        return Vector2.ceil(this);
+    }
+
+    /**
+     * Adds another vector to this vector, scaling the other by a given factor.
+     *
+     * @param other The other vector to add.
+     * @param scalar The amount to scale the other vector by.
+     * @returns The resulting vector of this + other * scalar.
+     */
+    public addScaled(other: Vector2Like, scalar: number): Vector2 {
+        return Vector2.addScaled(this, other, scalar);
+    }
+
+    public subtract(constant: number): Vector2;
+    public subtract(x: number, y: number): Vector2;
+    public subtract(vector: Vector2Like): Vector2;
+    public subtract(value: number | Vector2Like, other?: number): Vector2 {
+        if (!isNumber(value)) {
+            return Vector2.subtract(this, value);
+        }
+        return Vector2.subtract(this, value, other ?? value);
+    }
+
+    /**
+     * Subtracts another vector from this vector, scaling the other by a given
+     * factor.
+     *
+     * @param other The other vector to subtract.
+     * @param scalar The amount to scale the other vector by.
+     * @returns The resulting vector of this - other * scalar.
+     */
+    public subtractScaled(other: Vector2Like, scalar: number): Vector2 {
+        return Vector2.subtractScaled(this, other, scalar);
+    }
+
+    public rotateDegrees(degrees: number): Vector2 {
+        return Vector2.rotateDegrees(this, degrees);
+    }
+
+    public rotateRadians(radians: number): Vector2 {
+        return Vector2.rotateRadians(this, radians);
+    }
+
+    public toAngleRadians(): number {
+        return Vector2.toAngleRadians(this);
+    }
+
+    public toAngleDegrees(): number {
+        return Vector2.toAngleDegrees(this);
+    }
+
+    public determinant(other: Vector2Like): number {
+        return Vector2.determinant(this, other);
+    }
+
+    public isNear(other: Vector2Like, threshold = 0.0001): boolean {
+        return Vector2.isNear(this, other, threshold);
+    }
+
     public [Symbol.iterator]() {
-        let first = true;
-        return {
-            next: () => {
-                const res = {
-                    value: first ? this._x : this._y,
-                    done: !first,
-                };
-                first = false;
-                return res;
-            },
-        };
+        return [this._x, this._y][Symbol.iterator]();
     }
 
     toString(): string {
@@ -311,12 +462,9 @@ export class Vector2
         return Vector2.hashCode(this);
     }
 
-    equals(other: Vector2Like): boolean {
-        return this.x === other.x && this.y === other.y;
+    equals(other: unknown): boolean {
+        return Vector2.equals(this, other);
     }
 }
 
-export const hashVector: Hasher<Vector2Like> = Vector2.hashCode;
-export const representVector: Representer<Vector2Like> = Vector2.toString;
-
-export default Vector2;
+export type Point = Vector2;
