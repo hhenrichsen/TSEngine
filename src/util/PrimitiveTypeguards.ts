@@ -1,7 +1,5 @@
-export type Validator<T> = (value: unknown) => value is T;
-
-export function isNullOrUndefined<T>(
-    value: T | null | undefined,
+export function isNullOrUndefined(
+    value: unknown,
 ): value is null | undefined {
     return value == null;
 }
@@ -34,23 +32,25 @@ export function isTruthy<T>(
     return !!value;
 }
 
-export function isArray<T>(itemValidator: Validator<T>): Validator<T[]> {
-    return (value): value is T[] =>
-        Array.isArray(value) && value.every(itemValidator);
+export function isArray(value: unknown): value is unknown[] {
+    return Array.isArray(value);
 }
 
-export function isEither<A, B>(
-    validatorA: Validator<A>,
-    validatorB: Validator<B>,
-): Validator<A | B> {
-    return (value: unknown): value is A | B =>
-        validatorA(value) || validatorB(value);
+export function isObject(value: unknown): value is Record<string, unknown> {
+    return (
+        (value != null && typeof value == "object") ||
+        typeof value == "function"
+    );
 }
 
-export function isBoth<A, B>(
-    validatorA: Validator<A>,
-    validatorB: Validator<B>,
-): Validator<A | B> {
-    return (value: unknown): value is A & B =>
-        validatorA(value) && validatorB(value);
+export function isUnknown(value: unknown): value is unknown {
+    return true;
+}
+
+export function isUndefined(value: unknown): value is undefined {
+    return value === undefined;
+}
+
+export function isNull(value: unknown): value is undefined {
+    return value === null;
 }
