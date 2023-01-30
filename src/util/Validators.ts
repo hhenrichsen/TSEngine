@@ -34,11 +34,11 @@ export function objectValidator<
         if (isArray(value) || !isObject(value)) {
             return false;
         }
-        return Objects.every(validators, (validator, key) => {
+        const res = Objects.every(validators, (validator, key) => {
             return validator(value[key]);
         });
-        if (!strict) {
-            return true;
+        if (!res || !strict) {
+            return res;
         }
         return Objects.every(value, (value, key) => {
             return value === undefined || key in Object.keys(validators);
