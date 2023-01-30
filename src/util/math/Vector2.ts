@@ -75,6 +75,7 @@ export class Vector2
     public static UnitX: Vector2 = new Vector2(1, 0);
 
     public static UnitY: Vector2 = new Vector2(0, 1);
+
     /**
      * A constant one vector.
      */
@@ -132,6 +133,7 @@ export class Vector2
 
     /**
      * @param angle The angle to create the vector from, in degrees.
+     * @param scalar How large the magnitude of the vector should be
      * @returns A unit vector pointing towards the given angle.
      */
     static fromAngleDegrees(angle: number, scalar?: number): Vector2 {
@@ -143,6 +145,7 @@ export class Vector2
 
     /**
      * @param angle The angle to create the vector from, in radians.
+     * @param scalar How large the magnitude of the vector should be
      * @returns A unit vector pointing towards the given angle.
      */
     static fromAngleRadians(angle: number, scalar?: number): Vector2 {
@@ -232,6 +235,7 @@ export class Vector2
     /**
      * Adds another vector to this vector, scaling the other by a given factor.
      *
+     * @param target The first vector to add.
      * @param other The other vector to add.
      * @param scalar The amount to scale the other vector by.
      * @returns The resulting vector of this + other * scalar.
@@ -265,6 +269,7 @@ export class Vector2
      * Subtracts another vector from this vector, scaling the other by a given
      * factor.
      *
+     * @param target The first vector to subtract.
      * @param other The other vector to subtract.
      * @param scalar The amount to scale the other vector by.
      * @returns The resulting vector of this - other * scalar.
@@ -466,5 +471,3 @@ export class Vector2
         return Vector2.equals(this, other);
     }
 }
-
-export type Point = Vector2;
